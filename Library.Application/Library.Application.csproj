@@ -11,4 +11,9 @@
       <ProjectReference Include="..\Library.Persistence\Library.Persistence.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="AutoMapper" Version="13.0.1" />
+      <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.9.2" />
+    </ItemGroup>
+
 </Project>
