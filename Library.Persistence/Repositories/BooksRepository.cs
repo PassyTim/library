@@ -38,13 +38,11 @@ public class BooksRepository(ApplicationDbContext dbContext) : IBooksRepository
         await dbContext.Books
             .Where(b => b.Id == book.Id)
             .ExecuteUpdateAsync(s =>
-                s.SetProperty(b => b.Author, book.Author)
-                    .SetProperty(b => b.Description, book.Description)
+                s.SetProperty(b => b.Description, book.Description)
+                    .SetProperty(b=>b.Isbn, book.Isbn)
                     .SetProperty(b => b.Name, book.Name)
                     .SetProperty(b => b.Genre, book.Genre)
                     .SetProperty(b => b.ImageUrl, book.ImageUrl)
-                    .SetProperty(b => b.TakeDate, book.TakeDate)
-                    .SetProperty(b => b.ReturnDate, book.ReturnDate)
                     .SetProperty(b => b.AuthorId, book.AuthorId));
         
     }
@@ -63,6 +61,8 @@ public class BooksRepository(ApplicationDbContext dbContext) : IBooksRepository
 
     public async Task<bool> IsIsbnUnique(string isbn)
     {
+        var book = await GetByIsbn(isbn);
+        if (book is null) return true;
         return !await dbContext.Books.AnyAsync(b => b.Isbn == isbn);
     }
 

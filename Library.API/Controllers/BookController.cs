@@ -1,5 +1,6 @@
 using System.Net;
 using FluentValidation;
+using Library.Application;
 using Library.Application.Contracts;
 using Library.Application.IServices;
 using Microsoft.AspNetCore.Mvc;
@@ -34,6 +35,42 @@ public class BookController(IBookService bookService,
             _response.StatusCode = HttpStatusCode.NotFound;
             return BadRequest(_response);
         }
+        
+        if (_response.Data is null)
+        {
+            _response.Errors.Add("There is no book with this Id");
+            _response.IsSuccess = false;
+            _response.StatusCode = HttpStatusCode.NotFound;
+            return NotFound(_response);
+        }
+
+        _response.StatusCode = HttpStatusCode.OK;
+        return Ok(_response);
+    }
+
+    [HttpGet("{isbn}", Name = "GetBookByIsbn")]
+    
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<ApiResponse>> GetByIsbn(string isbn)
+    {
+        _response.Data = await bookService.GetByIsbn(isbn);
+        if (!IsbnValidator.Validate(isbn))
+        {
+            _response.Errors.Add("ISBN is not valid");
+            _response.IsSuccess = false;
+            _response.StatusCode = HttpStatusCode.BadRequest;
+            return BadRequest(_response);
+        }
+
+        if (_response.Data is null)
+        {
+            _response.Errors.Add("There is no book with this ISBN");
+            _response.IsSuccess = false;
+            _response.StatusCode = HttpStatusCode.NotFound;
+            return NotFound(_response);
+        }
 
         _response.StatusCode = HttpStatusCode.OK;
         return Ok(_response);
@@ -44,6 +81,7 @@ public class BookController(IBookService bookService,
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<ApiResponse>> Create([FromBody] BookRequest bookCreateRequest)
     {
+        //TODO: сделать проверку на то, есть ли автор с нужным айди
         var validationResult = await validator.ValidateAsync(bookCreateRequest);
         if (!validationResult.IsValid)
         {
@@ -53,9 +91,19 @@ public class BookController(IBookService bookService,
             }
             _response.IsSuccess = false;
         }
-        if (!_response.IsSuccess)
+
+        if (bookCreateRequest.Id != 0)
         {
             _response.StatusCode = HttpStatusCode.BadRequest;
+            _response.Errors.Add("Id must be 0 while creating book");
+            _response.IsSuccess = false;
+            return BadRequest(_response);
+        }
+        
+        if (!_response.IsSuccess )
+        {
+            _response.StatusCode = HttpStatusCode.BadRequest;
+            _response.IsSuccess = false;
             return BadRequest(_response);
         }
         
@@ -69,7 +117,17 @@ public class BookController(IBookService bookService,
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<ApiResponse>> Delete(int id)
     {
+        var book = await bookService.GetById(id);
+        if (book is null)
+        {
+            _response.IsSuccess = false;
+            _response.Errors.Add($"There is no book to delete with id: {id}");
+            _response.StatusCode = HttpStatusCode.BadRequest;
+            return BadRequest(_response);
+        }
+        
         await bookService.Remove(id);
+        
         if (!_response.IsSuccess)
         {
             _response.StatusCode = HttpStatusCode.BadRequest;
@@ -83,21 +141,33 @@ public class BookController(IBookService bookService,
     [HttpPut("{id:int}",Name = "UpdateBook")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<ApiResponse>> Update([FromBody] BookRequest bookUpdateRequest)
+    public async Task<ActionResult<ApiResponse>> Update(int id,[FromBody] BookRequest bookUpdateRequest)
     { 
-        // var validationResult = await validator.ValidateAsync(bookUpdateRequest);
-        // if (!validationResult.IsValid)
-        // {
-        //     foreach (var item in validationResult.Errors)
-        //     {
-        //         _response.Errors.Add(item.ErrorMessage);
-        //     }
-        //     _response.IsSuccess = false;
-        // }
+        //TODO: сделать проверку на то, есть ли автор с нужным айди
+        var validationResult = await validator.ValidateAsync(bookUpdateRequest);
+        var book = await bookService.GetById(id);
         
-        if (!_response.IsSuccess)
+        if (book is null)
+        {
+            _response.IsSuccess = false;
+            _response.Errors.Add($"There is no book to update with id: {id}");
+            _response.StatusCode = HttpStatusCode.BadRequest;
+            return BadRequest(_response);
+        }
+        
+        if (!validationResult.IsValid && book.Isbn != bookUpdateRequest.Isbn)
+        {
+            foreach (var item in validationResult.Errors)
+            {
+                _response.Errors.Add(item.ErrorMessage);
+            }
+            _response.IsSuccess = false;
+        }
+        
+        if (!_response.IsSuccess || id != bookUpdateRequest.Id)
         {
             _response.StatusCode = HttpStatusCode.BadRequest;
+            _response.IsSuccess = false;
             return BadRequest(_response);
         }
         

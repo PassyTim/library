@@ -19,7 +19,7 @@ public class BookConfiguration : IEntityTypeConfiguration<Book>
             new Book
             {
                 Id = 1,
-                Isbn = "978-5-17-118366-1",
+                Isbn = "9785171183661",
                 Name = "Eugene Onegin",
                 Genre = "Novel",
                 Description = "A novel in verse by Alexander Pushkin.",
@@ -29,7 +29,7 @@ public class BookConfiguration : IEntityTypeConfiguration<Book>
             new Book
             {
                 Id = 2,
-                Isbn = "978-1-101-94829-4",
+                Isbn = "9781101948294",
                 Name = "The Shining",
                 Genre = "Horror",
                 Description = "A horror novel by Stephen King.",
@@ -39,7 +39,7 @@ public class BookConfiguration : IEntityTypeConfiguration<Book>
             new Book
             {
                 Id = 3,
-                Isbn = "978-5-17-118368-5",
+                Isbn = "9785171183685",
                 Name = "Crime and Punishment",
                 Genre = "Philosophical Novel",
                 Description = "A philosophical novel by Fyodor Dostoevsky.",
@@ -49,7 +49,7 @@ public class BookConfiguration : IEntityTypeConfiguration<Book>
             new Book
             {
                 Id = 4,
-                Isbn = "978-5-17-118370-8",
+                Isbn = "9785171183708",
                 Name = "The Brothers Karamazov",
                 Genre = "Philosophical Novel",
                 Description = "A philosophical novel by Fyodor Dostoevsky.",
@@ -59,7 +59,7 @@ public class BookConfiguration : IEntityTypeConfiguration<Book>
             new Book
             {
                 Id = 5,
-                Isbn = "978-0-7432-7356-5",
+                Isbn = "9780743273565",
                 Name = "It",
                 Genre = "Horror",
                 Description = "A horror novel by Stephen King.",
