@@ -16,6 +16,7 @@ services.AddScoped<IBooksRepository, BooksRepository>();
 services.AddScoped<IAuthorsRepository, AuthorsRepository>();
 
 services.AddScoped<IBookService, BookService>();
+services.AddScoped<IAuthorService, AuthorService>();
 
 services.AddValidatorsFromAssemblyContaining(typeof(BooksValidator));
 services.AddAutoMapper(typeof(MappingConfig));

@@ -9,6 +9,7 @@ public interface IAuthorsRepository
     Task<Author?> GetByIdWithBooks(int id);
     Task CreateAsync(Author author);
     Task UpdateAsync(Author author);
-    Task RemoveAsync(Author author);
+    Task RemoveAsync(int authorId);
+    Task<bool> IsAuthorWithIdExists(int id);
     Task SaveAsync();
 }

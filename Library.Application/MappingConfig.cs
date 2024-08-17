@@ -18,5 +18,8 @@ public class MappingConfig : Profile
                 opts => opts.Ignore());
             
         CreateMap<BookRequest, Book>().ReverseMap();
+
+        CreateMap<AuthorRequest, Author>().ReverseMap();
+        CreateMap<AuthorResponse, Author>().ReverseMap();
     }
 }

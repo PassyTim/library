@@ -10,6 +10,7 @@ namespace Library.API.Controllers;
 [ApiController]
 [Route("api/book")]
 public class BookController(IBookService bookService,
+    IAuthorService authorService,
     IValidator<BookRequest> validator) : ControllerBase
 {
     private readonly ApiResponse _response = new();
@@ -81,7 +82,15 @@ public class BookController(IBookService bookService,
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<ApiResponse>> Create([FromBody] BookRequest bookCreateRequest)
     {
-        //TODO: сделать проверку на то, есть ли автор с нужным айди
+        var author = await authorService.GetById(bookCreateRequest.AuthorId);
+        if (author is null)
+        {
+            _response.StatusCode = HttpStatusCode.BadRequest;
+            _response.Errors.Add("Invalid author id");
+            _response.IsSuccess = false;
+            return BadRequest(_response);
+        }
+        
         var validationResult = await validator.ValidateAsync(bookCreateRequest);
         if (!validationResult.IsValid)
         {
@@ -143,7 +152,15 @@ public class BookController(IBookService bookService,
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<ApiResponse>> Update(int id,[FromBody] BookRequest bookUpdateRequest)
     { 
-        //TODO: сделать проверку на то, есть ли автор с нужным айди
+        var author = await authorService.GetById(bookUpdateRequest.AuthorId);
+        if (author is null)
+        {
+            _response.StatusCode = HttpStatusCode.BadRequest;
+            _response.Errors.Add("Invalid author id");
+            _response.IsSuccess = false;
+            return BadRequest(_response);
+        }
+        
         var validationResult = await validator.ValidateAsync(bookUpdateRequest);
         var book = await bookService.GetById(id);
         

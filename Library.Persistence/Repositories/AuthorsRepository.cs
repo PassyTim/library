@@ -38,19 +38,23 @@ public class AuthorsRepository(ApplicationDbContext dbContext) : IAuthorsReposit
     public async Task UpdateAsync(Author author)
     {
         await dbContext.Authors
-            .Where(b => b.Id == author.Id)
+            .Where(a => a.Id == author.Id)
             .ExecuteUpdateAsync(s =>
-                s.SetProperty(a => a.Books, author.Books)
-                    .SetProperty(a => a.Country, author.Country)
+                s.SetProperty(a => a.Country, author.Country)
                     .SetProperty(a => a.FirstName, author.FirstName)
                     .SetProperty(a => a.LastName, author.LastName)
                     .SetProperty(a => a.BirthDate, author.BirthDate));
     }
+    
+    public async Task<bool> IsAuthorWithIdExists(int id)
+    {
+        return await dbContext.Authors.AnyAsync(a => a.Id == id);
+    }
 
-    public async Task RemoveAsync(Author author)
+    public async Task RemoveAsync(int authorId)
     {
         await dbContext.Authors
-            .Where(a=>a.Id == author.Id)
+            .Where(a=>a.Id == authorId)
             .ExecuteDeleteAsync();
     }
 

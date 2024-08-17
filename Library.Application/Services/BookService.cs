@@ -51,9 +51,8 @@ public class BookService(IBooksRepository repository,
         await repository.UpdateAsync(bookToUpdate);
     }
 
-    public async Task Remove(int bookId)
+    public async Task Remove(int id)
     {
-        await repository.RemoveAsync(bookId);
-
+        await repository.RemoveAsync(id);
     }
 }
