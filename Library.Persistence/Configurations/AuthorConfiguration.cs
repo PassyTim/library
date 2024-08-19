@@ -1,3 +1,4 @@
+using Library.Domain;
 using Library.Domain.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -10,9 +11,9 @@ public class AuthorConfiguration : IEntityTypeConfiguration<Author>
     {
         builder.HasKey(p => p.Id);
         
-        builder.Property(p => p.FirstName).IsRequired().HasMaxLength(50);
-        builder.Property(p => p.LastName).HasMaxLength(50);
-        builder.Property(p => p.Country).HasMaxLength(60);
+        builder.Property(p => p.FirstName).IsRequired().HasMaxLength(Constants.AuthorFirstNameMaxLength);
+        builder.Property(p => p.LastName).HasMaxLength(Constants.AuthorLastNameMaxLength);
+        builder.Property(p => p.Country).HasMaxLength(Constants.AuthorCountryMaxLength);
 
         builder
             .HasMany(a => a.Books)

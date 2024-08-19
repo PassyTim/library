@@ -1,3 +1,4 @@
+using Library.Domain;
 using Library.Domain.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -11,9 +12,9 @@ public class BookConfiguration : IEntityTypeConfiguration<Book>
         builder.HasKey(p => p.Id);
         builder.HasIndex(p => p.Isbn).IsUnique();
         
-        builder.Property(p => p.Name).IsRequired().HasMaxLength(100);
-        builder.Property(p => p.Isbn).IsRequired().HasMaxLength(20);
-        builder.Property(p => p.Genre).IsRequired().HasMaxLength(20);
+        builder.Property(p => p.Name).IsRequired().HasMaxLength(Constants.BookNameMaxLength);
+        builder.Property(p => p.Isbn).IsRequired().HasMaxLength(Constants.BookIsbnMaxLength);
+        builder.Property(p => p.Genre).IsRequired().HasMaxLength(Constants.BookGenreMaxLength);
 
         builder.HasData(
             new Book

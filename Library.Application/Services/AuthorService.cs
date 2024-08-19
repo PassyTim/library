@@ -16,17 +16,19 @@ public class AuthorService(IAuthorsRepository repository,
         return authorResponseList;
     }
 
-    public async Task<AuthorResponse> GetById(int id)
+    public async Task<AuthorResponse> GetById(int id, bool isWithBooks = false)
     {
-        var author = await repository.GetById(id);
-        var authorResponse = mapper.Map<AuthorResponse>(author);
-        return authorResponse;
-    }
-
-    public async Task<AuthorResponse> GetByIdWithBooks(int id)
-    {
-        var author = await repository.GetByIdWithBooks(id);
-        var authorResponse = mapper.Map<AuthorResponse>(author);
+        Author? author;
+        AuthorResponse authorResponse;
+        if (isWithBooks)
+        {
+            author = await repository.GetByIdWithBooks(id);
+            authorResponse = mapper.Map<AuthorResponse>(author);
+            return authorResponse;
+        }
+        
+        author = await repository.GetById(id);
+         authorResponse = mapper.Map<AuthorResponse>(author);
         return authorResponse;
     }
 

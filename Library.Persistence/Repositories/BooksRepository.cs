@@ -61,9 +61,12 @@ public class BooksRepository(ApplicationDbContext dbContext) : IBooksRepository
 
     public async Task<bool> IsIsbnUnique(string isbn)
     {
-        var book = await GetByIsbn(isbn);
-        if (book is null) return true;
         return !await dbContext.Books.AnyAsync(b => b.Isbn == isbn);
+    }
+
+    public async Task<bool> IsIsbnUniqueForUpdate(string isbn, int id)
+    {
+        return !await dbContext.Books.AnyAsync(b => b.Isbn == isbn && b.Id != id);
     }
 
     public async Task SaveAsync()

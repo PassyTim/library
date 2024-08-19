@@ -31,11 +31,6 @@ public class BookController(IBookService bookService,
     public async Task<ActionResult<ApiResponse>> GetById(int id)
     {
         _response.Data = await bookService.GetById(id);
-        if (!_response.IsSuccess)
-        {
-            _response.StatusCode = HttpStatusCode.NotFound;
-            return BadRequest(_response);
-        }
         
         if (_response.Data is null)
         {
@@ -44,13 +39,18 @@ public class BookController(IBookService bookService,
             _response.StatusCode = HttpStatusCode.NotFound;
             return NotFound(_response);
         }
+        
+        if (!_response.IsSuccess)
+        {
+            _response.StatusCode = HttpStatusCode.BadRequest;
+            return BadRequest(_response);
+        }
 
         _response.StatusCode = HttpStatusCode.OK;
         return Ok(_response);
     }
 
     [HttpGet("{isbn}", Name = "GetBookByIsbn")]
-    
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -82,16 +82,10 @@ public class BookController(IBookService bookService,
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<ApiResponse>> Create([FromBody] BookRequest bookCreateRequest)
     {
-        var author = await authorService.GetById(bookCreateRequest.AuthorId);
-        if (author is null)
-        {
-            _response.StatusCode = HttpStatusCode.BadRequest;
-            _response.Errors.Add("Invalid author id");
-            _response.IsSuccess = false;
-            return BadRequest(_response);
-        }
+        var context = new ValidationContext<BookRequest>(bookCreateRequest);
+        context.RootContextData["IsCreate"] = true;
+        var validationResult = await validator.ValidateAsync(context);
         
-        var validationResult = await validator.ValidateAsync(bookCreateRequest);
         if (!validationResult.IsValid)
         {
             foreach (var item in validationResult.Errors)
@@ -100,19 +94,10 @@ public class BookController(IBookService bookService,
             }
             _response.IsSuccess = false;
         }
-
-        if (bookCreateRequest.Id != 0)
-        {
-            _response.StatusCode = HttpStatusCode.BadRequest;
-            _response.Errors.Add("Id must be 0 while creating book");
-            _response.IsSuccess = false;
-            return BadRequest(_response);
-        }
         
-        if (!_response.IsSuccess )
+        if (!_response.IsSuccess)
         {
             _response.StatusCode = HttpStatusCode.BadRequest;
-            _response.IsSuccess = false;
             return BadRequest(_response);
         }
         
@@ -120,9 +105,39 @@ public class BookController(IBookService bookService,
         _response.StatusCode = HttpStatusCode.Created;
         return Ok(_response);
     }
+    
+    [HttpPut("{id:int}",Name = "UpdateBook")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<ApiResponse>> Update(int id,[FromBody] BookRequest bookUpdateRequest)
+    { 
+        var context = new ValidationContext<BookRequest>(bookUpdateRequest);
+        context.RootContextData["Id"] = id;
+        context.RootContextData["IsUpdate"] = true;
+        var validationResult = await validator.ValidateAsync(context);
+        
+        if (!validationResult.IsValid)
+        {
+            foreach (var item in validationResult.Errors)
+            {
+                _response.Errors.Add(item.ErrorMessage);
+            }
+            _response.IsSuccess = false;
+        }
+        
+        if (!_response.IsSuccess)
+        {
+            _response.StatusCode = HttpStatusCode.BadRequest;
+            return BadRequest(_response);
+        }
+        
+        await bookService.Update(bookUpdateRequest);
+        _response.StatusCode= HttpStatusCode.NoContent;
+        return Ok(_response);
+    }
 
     [HttpDelete("{id:int}", Name = "DeleteBook")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<ApiResponse>> Delete(int id)
     {
@@ -143,53 +158,7 @@ public class BookController(IBookService bookService,
             return BadRequest(_response);
         }
 
-        _response.StatusCode = HttpStatusCode.OK;
-        return Ok(_response);
-    }
-
-    [HttpPut("{id:int}",Name = "UpdateBook")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<ApiResponse>> Update(int id,[FromBody] BookRequest bookUpdateRequest)
-    { 
-        var author = await authorService.GetById(bookUpdateRequest.AuthorId);
-        if (author is null)
-        {
-            _response.StatusCode = HttpStatusCode.BadRequest;
-            _response.Errors.Add("Invalid author id");
-            _response.IsSuccess = false;
-            return BadRequest(_response);
-        }
-        
-        var validationResult = await validator.ValidateAsync(bookUpdateRequest);
-        var book = await bookService.GetById(id);
-        
-        if (book is null)
-        {
-            _response.IsSuccess = false;
-            _response.Errors.Add($"There is no book to update with id: {id}");
-            _response.StatusCode = HttpStatusCode.BadRequest;
-            return BadRequest(_response);
-        }
-        
-        if (!validationResult.IsValid && book.Isbn != bookUpdateRequest.Isbn)
-        {
-            foreach (var item in validationResult.Errors)
-            {
-                _response.Errors.Add(item.ErrorMessage);
-            }
-            _response.IsSuccess = false;
-        }
-        
-        if (!_response.IsSuccess || id != bookUpdateRequest.Id)
-        {
-            _response.StatusCode = HttpStatusCode.BadRequest;
-            _response.IsSuccess = false;
-            return BadRequest(_response);
-        }
-        
-        await bookService.Update(bookUpdateRequest);
-        _response.StatusCode= HttpStatusCode.OK;
+        _response.StatusCode = HttpStatusCode.NoContent;
         return Ok(_response);
     }
 }

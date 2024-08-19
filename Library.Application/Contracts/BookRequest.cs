@@ -1,12 +1,13 @@
 using System.ComponentModel.DataAnnotations;
+using Library.Domain;
 
 namespace Library.Application.Contracts;
 
 public record BookRequest(
     int Id,
-    [Required] [MaxLength(20)] string Isbn,
-    [Required] [MaxLength(100)] string Name,
-    [Required] [MaxLength(20)] string Genre,
+    [Required] string Isbn,
+    [Required] string Name,
+    [Required] string Genre,
     string Description,
     string ImageUrl,
     int AuthorId);
