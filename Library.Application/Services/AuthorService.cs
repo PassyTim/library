@@ -28,7 +28,7 @@ public class AuthorService(IAuthorsRepository repository,
         }
         
         author = await repository.GetById(id);
-         authorResponse = mapper.Map<AuthorResponse>(author);
+        authorResponse = mapper.Map<AuthorResponse>(author);
         return authorResponse;
     }
 

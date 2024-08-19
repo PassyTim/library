@@ -29,20 +29,7 @@ public class AuthorController(
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<ApiResponse>> GetById(int id, bool isWithBooks)
     {
-        if (id <= 0)
-        {
-            _response.Errors.Add("Incorrect Id");
-            _response.IsSuccess = false;
-            _response.StatusCode = HttpStatusCode.BadRequest;
-            return BadRequest(_response);
-        }
-        
         _response.Data = await service.GetById(id, isWithBooks);
-        if (!_response.IsSuccess)
-        {
-            _response.StatusCode = HttpStatusCode.NotFound;
-            return BadRequest(_response);
-        }
         
         if (_response.Data is null)
         {
@@ -50,6 +37,12 @@ public class AuthorController(
             _response.IsSuccess = false;
             _response.StatusCode = HttpStatusCode.NotFound;
             return NotFound(_response);
+        }
+        
+        if (!_response.IsSuccess)
+        {
+            _response.StatusCode = HttpStatusCode.NotFound;
+            return BadRequest(_response);
         }
         
         _response.StatusCode = HttpStatusCode.OK;
@@ -61,18 +54,22 @@ public class AuthorController(
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<ApiResponse>> Create([FromBody] AuthorRequest authorCreateRequest)
     {
-        if (authorCreateRequest.Id != 0)
+        var validationContext = new ValidationContext<AuthorRequest>(authorCreateRequest);
+        validationContext.RootContextData["IsCreate"] = true;
+        var validationResult = await validator.ValidateAsync(validationContext);
+        
+        if (!validationResult.IsValid)
         {
-            _response.StatusCode = HttpStatusCode.BadRequest;
-            _response.Errors.Add("Id must be 0 while creating author");
+            foreach (var item in validationResult.Errors)
+            {
+                _response.Errors.Add(item.ErrorMessage);
+            }
             _response.IsSuccess = false;
-            return BadRequest(_response);
         }
         
-        if (!_response.IsSuccess )
+        if (!_response.IsSuccess)
         {
             _response.StatusCode = HttpStatusCode.BadRequest;
-            _response.IsSuccess = false;
             return BadRequest(_response);
         }
         
@@ -86,20 +83,23 @@ public class AuthorController(
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<ApiResponse>> Update(int id, [FromBody] AuthorRequest authorUpdateRequest)
     {
-        var validationResult = await validator.ValidateAsync(authorUpdateRequest);
-        var author = await service.GetById(id);
-        if (author is null)
+        var validationContext = new ValidationContext<AuthorRequest>(authorUpdateRequest);
+        validationContext.RootContextData["IsUpdate"] = true;
+        validationContext.RootContextData["Id"] = id;
+        var validationResult = await validator.ValidateAsync(validationContext);
+        
+        if (!validationResult.IsValid)
         {
+            foreach (var item in validationResult.Errors)
+            {
+                _response.Errors.Add(item.ErrorMessage);
+            }
             _response.IsSuccess = false;
-            _response.Errors.Add($"There is no author to update with id: {id}");
-            _response.StatusCode = HttpStatusCode.BadRequest;
-            return BadRequest(_response);
         }
         
-        if (!_response.IsSuccess || id != authorUpdateRequest.Id)
+        if (!_response.IsSuccess)
         {
             _response.StatusCode = HttpStatusCode.BadRequest;
-            _response.IsSuccess = false;
             return BadRequest(_response);
         }
         
