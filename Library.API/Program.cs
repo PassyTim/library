@@ -1,4 +1,5 @@
 using FluentValidation;
+using Library.API.Middlewares;
 using Library.Application;
 using Library.Application.IServices;
 using Library.Application.Services;
@@ -10,6 +11,8 @@ var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;
 
 services.AddDbContext<ApplicationDbContext>();
+
+services.AddTransient<GlobalExceptionHandlingMiddleware>();
 
 services.AddScoped<IBooksRepository, BooksRepository>();
 services.AddScoped<IAuthorsRepository, AuthorsRepository>();
@@ -35,6 +38,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
 app.MapControllers();
 
 app.Run();
