@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using AutoMapper;
 using Library.Application.Contracts;
 using Library.Application.IServices;
@@ -10,9 +11,10 @@ public class BookService(
     IUnitOfWork unitOfWork,
     IMapper mapper) : IBookService
 {
-    public async Task<List<BookResponse>> GetAll()
+    public async Task<List<BookResponse>> GetAll(Expression<Func<Book, bool>>? filter = null,
+        int pageSize = 0, int pageNumber = 0)
     {
-        var books = await unitOfWork.BooksRepository.GetAllAsync();
+        var books = await unitOfWork.BooksRepository.GetAllAsync(filter, pageSize, pageNumber);
         var booksResponse = mapper.Map<List<BookResponse>>(books);
         return booksResponse;
     }

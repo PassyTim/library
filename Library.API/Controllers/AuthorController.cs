@@ -3,6 +3,7 @@ using FluentValidation;
 using Library.Application.Contracts;
 using Library.Application.IServices;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace Library.API.Controllers;
 
@@ -16,9 +17,12 @@ public class AuthorController(
     
     [HttpGet(Name = "GetAllAuthors")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<ActionResult<ApiResponse>> GetAll()
+    public async Task<ActionResult<ApiResponse>> GetAll(int pageSize = 0, int pageNumber = 1)
     {
-        _response.Data = await service.GetAll();
+        Pagination pagination = new Pagination { PageSize = pageSize, PageNumber = pageNumber };
+        Response.Headers.Append("Pagination", JsonConvert.SerializeObject(pagination));
+        
+        _response.Data = await service.GetAll(pageSize:pageSize, pageNumber:pageNumber);
         _response.StatusCode = HttpStatusCode.OK;
         return Ok(_response);
     }

@@ -4,6 +4,7 @@ using Library.Application;
 using Library.Application.Contracts;
 using Library.Application.IServices;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace Library.API.Controllers;
 
@@ -16,9 +17,12 @@ public class BookController(IBookService bookService,
     
     [HttpGet(Name = "GetAllBooks")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<ActionResult<ApiResponse>> GetAllBooks()
+    public async Task<ActionResult<ApiResponse>> GetAllBooks(int pageSize = 0, int pageNumber = 1)
     {
-        _response.Data = await bookService.GetAll();
+        Pagination pagination = new Pagination { PageSize = pageSize, PageNumber = pageNumber };
+        Response.Headers.Append("Pagination", JsonConvert.SerializeObject(pagination));
+            
+        _response.Data = await bookService.GetAll(pageSize:pageSize, pageNumber:pageNumber);
         _response.StatusCode = HttpStatusCode.OK;
         return Ok(_response);
     }

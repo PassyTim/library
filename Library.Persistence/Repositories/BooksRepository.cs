@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using Library.Domain.IRepositories;
 using Library.Domain.Models;
 using Microsoft.EntityFrameworkCore;
@@ -6,9 +7,21 @@ namespace Library.Persistence.Repositories;
 
 public class BooksRepository(ApplicationDbContext dbContext) : IBooksRepository
 {
-    public async Task<List<Book>> GetAllAsync()
+    public async Task<List<Book>> GetAllAsync(Expression<Func<Book, bool>>? filter = null,
+        int pageSize = 0, int pageNumber = 0)
     {
-        return await dbContext.Books
+        IQueryable <Book> query = dbContext.Books;
+        
+        if (filter is not null) query = query.Where(filter);
+        
+        if (pageSize > 0)
+        {
+            if (pageSize > 100) pageSize = 100;
+
+            query = query.Skip(pageSize * (pageNumber - 1)).Take(pageSize);
+        }
+        
+        return await query
             .AsNoTracking()
             .ToListAsync();
     }

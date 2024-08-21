@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using AutoMapper;
 using Library.Application.Contracts;
 using Library.Application.IServices;
@@ -10,9 +11,10 @@ public class AuthorService(
     IUnitOfWork unitOfWork,
     IMapper mapper) : IAuthorService
 {
-    public async Task<List<AuthorResponse>> GetAll()
+    public async Task<List<AuthorResponse>> GetAll(Expression<Func<Author, bool>>? filter = null,
+        int pageSize = 0, int pageNumber = 0)
     {
-        var authors = await unitOfWork.AuthorsRepository.GetAllAsync();
+        var authors = await unitOfWork.AuthorsRepository.GetAllAsync(filter, pageSize, pageNumber);
         var authorResponseList = mapper.Map<List<AuthorResponse>>(authors);
         return authorResponseList;
     }
