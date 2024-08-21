@@ -30,7 +30,6 @@ public class BooksRepository(ApplicationDbContext dbContext) : IBooksRepository
     public async Task CreateAsync(Book book)
     {
         await dbContext.Books.AddAsync(book);
-        await SaveAsync();
     }
 
     public async Task UpdateAsync(Book book)
@@ -67,10 +66,5 @@ public class BooksRepository(ApplicationDbContext dbContext) : IBooksRepository
     public async Task<bool> IsIsbnUniqueForUpdate(string isbn, int id)
     {
         return !await dbContext.Books.AnyAsync(b => b.Isbn == isbn && b.Id != id);
-    }
-
-    public async Task SaveAsync()
-    {
-        await dbContext.SaveChangesAsync();
     }
 }

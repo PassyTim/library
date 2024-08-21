@@ -1,13 +1,13 @@
 using FluentValidation;
 using Library.Application.Contracts;
 using Library.Domain;
-using Library.Domain.IRepositories;
+using Library.Persistence;
 
 namespace Library.Application.Services;
 
 public class BooksValidator : AbstractValidator<BookRequest>
 {
-    public BooksValidator(IBooksRepository booksRepository, IAuthorsRepository authorsRepository)
+    public BooksValidator(IUnitOfWork unitOfWork)
     {
         RuleFor(b => b.Id).CustomAsync(async (id, context, _) =>
         {
@@ -23,7 +23,7 @@ public class BooksValidator : AbstractValidator<BookRequest>
         {
             if (context.RootContextData.TryGetValue("IsUpdate", out var _))
             {
-                var book = await booksRepository.GetById(id);
+                var book = await unitOfWork.BooksRepository.GetById(id);
                 if (book is null)
                 {
                     context.AddFailure("Id", $"There is no book to update with id {id}");
@@ -48,7 +48,7 @@ public class BooksValidator : AbstractValidator<BookRequest>
                 if (context.RootContextData.TryGetValue("IsUpdate", out var _))
                 {
                     var id = (int)context.RootContextData["Id"];
-                    var isIsbnUnique = await booksRepository.IsIsbnUniqueForUpdate(isbn, id);
+                    var isIsbnUnique = await unitOfWork.BooksRepository.IsIsbnUniqueForUpdate(isbn, id);
                     if (!isIsbnUnique)
                     {
                         context.AddFailure("Isbn", "ISBN must be unique");
@@ -59,7 +59,7 @@ public class BooksValidator : AbstractValidator<BookRequest>
             {
                 if (context.RootContextData.TryGetValue("IsCreate", out var _))
                 {
-                    var isIsbnUnique = await booksRepository.IsIsbnUnique(isbn);
+                    var isIsbnUnique = await unitOfWork.BooksRepository.IsIsbnUnique(isbn);
                     if (!isIsbnUnique)
                     {
                         context.AddFailure("Isbn", "ISBN must be unique");
@@ -71,7 +71,7 @@ public class BooksValidator : AbstractValidator<BookRequest>
             .MustAsync(async (authorId, _) => authorId > 0).WithMessage("AuthorId must be greater than 0")
             .MustAsync(async (authorId, _) =>
             {
-                var author = await authorsRepository.GetById(authorId);
+                var author = await unitOfWork.AuthorsRepository.GetById(authorId);
                 return author is not null;
             }).WithMessage("There is no author with this id");
 

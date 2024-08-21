@@ -32,7 +32,6 @@ public class AuthorsRepository(ApplicationDbContext dbContext) : IAuthorsReposit
     {
         await dbContext.Authors
             .AddAsync(author);
-        await SaveAsync();
     }
 
     public async Task UpdateAsync(Author author)
@@ -56,10 +55,5 @@ public class AuthorsRepository(ApplicationDbContext dbContext) : IAuthorsReposit
         await dbContext.Authors
             .Where(a=>a.Id == authorId)
             .ExecuteDeleteAsync();
-    }
-
-    public async Task SaveAsync()
-    {
-        await dbContext.SaveChangesAsync();
     }
 }

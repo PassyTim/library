@@ -14,6 +14,8 @@ services.AddDbContext<ApplicationDbContext>();
 services.AddScoped<IBooksRepository, BooksRepository>();
 services.AddScoped<IAuthorsRepository, AuthorsRepository>();
 
+services.AddScoped<IUnitOfWork, UnitOfWork>();
+
 services.AddScoped<IBookService, BookService>();
 services.AddScoped<IAuthorService, AuthorService>();
 

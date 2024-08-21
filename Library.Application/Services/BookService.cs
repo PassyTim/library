@@ -1,24 +1,25 @@
 using AutoMapper;
 using Library.Application.Contracts;
 using Library.Application.IServices;
-using Library.Domain.IRepositories;
 using Library.Domain.Models;
+using Library.Persistence;
 
 namespace Library.Application.Services;
 
-public class BookService(IBooksRepository repository,
+public class BookService(
+    IUnitOfWork unitOfWork,
     IMapper mapper) : IBookService
 {
     public async Task<List<BookResponse>> GetAll()
     {
-        var books= await repository.GetAllAsync();
+        var books = await unitOfWork.BooksRepository.GetAllAsync();
         var booksResponse = mapper.Map<List<BookResponse>>(books);
         return booksResponse;
     }
 
     public async Task<BookResponse> GetById(int id)
     {
-        var book = await repository.GetById(id);
+        var book = await unitOfWork.BooksRepository.GetById(id);
         var bookResponse = mapper.Map<BookResponse>(book);
         
         return bookResponse;
@@ -26,7 +27,7 @@ public class BookService(IBooksRepository repository,
 
     public async Task<BookResponse> GetByIsbn(string isbn)
     {
-        var book = await repository.GetByIsbn(isbn);
+        var book = await unitOfWork.BooksRepository.GetByIsbn(isbn);
         var bookResponse = mapper.Map<BookResponse>(book);
 
         return bookResponse;
@@ -39,7 +40,8 @@ public class BookService(IBooksRepository repository,
         var isbn = bookToCreate.Isbn;
 
         bookToCreate.Isbn = IsbnNormalizer.NormalizeIsbn(isbn);
-        await repository.CreateAsync(bookToCreate);
+        await unitOfWork.BooksRepository.CreateAsync(bookToCreate);
+        await unitOfWork.SaveChangesAsync();
     }
 
     public async Task Update(BookRequest bookUpdate)
@@ -48,11 +50,12 @@ public class BookService(IBooksRepository repository,
         var isbn = bookToUpdate.Isbn;
 
         bookToUpdate.Isbn = IsbnNormalizer.NormalizeIsbn(isbn);
-        await repository.UpdateAsync(bookToUpdate);
+        await unitOfWork.BooksRepository.UpdateAsync(bookToUpdate);
+        await unitOfWork.SaveChangesAsync();
     }
 
     public async Task Remove(int id)
     {
-        await repository.RemoveAsync(id);
+        await unitOfWork.BooksRepository.RemoveAsync(id);
     }
 }

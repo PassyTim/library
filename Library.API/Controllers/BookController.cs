@@ -10,7 +10,6 @@ namespace Library.API.Controllers;
 [ApiController]
 [Route("api/book")]
 public class BookController(IBookService bookService,
-    IAuthorService authorService,
     IValidator<BookRequest> validator) : ControllerBase
 {
     private readonly ApiResponse _response = new();

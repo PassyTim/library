@@ -1,17 +1,18 @@
 using AutoMapper;
 using Library.Application.Contracts;
 using Library.Application.IServices;
-using Library.Domain.IRepositories;
 using Library.Domain.Models;
+using Library.Persistence;
 
 namespace Library.Application.Services;
 
-public class AuthorService(IAuthorsRepository repository,
+public class AuthorService(
+    IUnitOfWork unitOfWork,
     IMapper mapper) : IAuthorService
 {
     public async Task<List<AuthorResponse>> GetAll()
     {
-        var authors = await repository.GetAllAsync();
+        var authors = await unitOfWork.AuthorsRepository.GetAllAsync();
         var authorResponseList = mapper.Map<List<AuthorResponse>>(authors);
         return authorResponseList;
     }
@@ -22,12 +23,12 @@ public class AuthorService(IAuthorsRepository repository,
         AuthorResponse authorResponse;
         if (isWithBooks)
         {
-            author = await repository.GetByIdWithBooks(id);
+            author = await unitOfWork.AuthorsRepository.GetByIdWithBooks(id);
             authorResponse = mapper.Map<AuthorResponse>(author);
             return authorResponse;
         }
         
-        author = await repository.GetById(id);
+        author = await unitOfWork.AuthorsRepository.GetById(id);
         authorResponse = mapper.Map<AuthorResponse>(author);
         return authorResponse;
     }
@@ -35,17 +36,19 @@ public class AuthorService(IAuthorsRepository repository,
     public async Task Create(AuthorRequest authorCreateRequest)
     {
         var authorToCreate = mapper.Map<Author>(authorCreateRequest);
-        await repository.CreateAsync(authorToCreate);
+        await unitOfWork.AuthorsRepository.CreateAsync(authorToCreate);
+        await unitOfWork.SaveChangesAsync();
     }
 
     public async Task Update(AuthorRequest authorUpdateRequest)
     {
         var authorToUpdate = mapper.Map<Author>(authorUpdateRequest);
-        await repository.UpdateAsync(authorToUpdate);
+        await unitOfWork.AuthorsRepository.UpdateAsync(authorToUpdate);
+        await unitOfWork.SaveChangesAsync();
     }
 
     public async Task Remove(int id)
     {
-        await repository.RemoveAsync(id);
+        await unitOfWork.AuthorsRepository.RemoveAsync(id);
     }
 }
