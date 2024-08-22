@@ -24,4 +24,17 @@
       <ProjectReference Include="..\Library.Persistence\Library.Persistence.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="wwwroot\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Include="wwwroot\Uploads\8fb16b40-17d4-43fa-b3fa-20238b342ad3.jpg" />
+      <None Include="wwwroot\Uploads\95a036bc205187af0456953a28ccccb1.jpeg" />
+      <None Include="wwwroot\Uploads\a6d50e17-c422-4c07-b73d-3b9e722fa1bb.jpg" />
+      <None Include="wwwroot\Uploads\i750566.jpg" />
+      <None Include="wwwroot\Uploads\NoImage.jpg" />
+      <None Include="wwwroot\Uploads\theShining.jpg" />
+    </ItemGroup>
+
 </Project>

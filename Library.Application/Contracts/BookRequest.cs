@@ -1,5 +1,5 @@
 using System.ComponentModel.DataAnnotations;
-using Library.Domain;
+using Microsoft.AspNetCore.Http;
 
 namespace Library.Application.Contracts;
 
@@ -9,5 +9,5 @@ public record BookRequest(
     [Required] string Name,
     [Required] string Genre,
     string Description,
-    string ImageUrl,
-    int AuthorId);
+    int AuthorId, 
+    IFormFile? Image);

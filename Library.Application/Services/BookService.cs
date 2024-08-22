@@ -34,13 +34,16 @@ public class BookService(
 
         return bookResponse;
     }
-    
 
     public async Task Create(BookRequest bookCreate)
     {
+        FileUploadHandler fileUploadHandler = new FileUploadHandler();
+        var path = fileUploadHandler.Upload(bookCreate.Image);
+        
         var bookToCreate = mapper.Map<Book>(bookCreate);
         var isbn = bookToCreate.Isbn;
 
+        bookToCreate.ImagePath = path;
         bookToCreate.Isbn = IsbnNormalizer.NormalizeIsbn(isbn);
         await unitOfWork.BooksRepository.CreateAsync(bookToCreate);
         await unitOfWork.SaveChangesAsync();
@@ -48,9 +51,13 @@ public class BookService(
 
     public async Task Update(BookRequest bookUpdate)
     {
+        FileUploadHandler fileUploadHandler = new FileUploadHandler();
+        var path = fileUploadHandler.Upload(bookUpdate.Image);
+        
         var bookToUpdate = mapper.Map<Book>(bookUpdate);
         var isbn = bookToUpdate.Isbn;
 
+        bookToUpdate.ImagePath = path;
         bookToUpdate.Isbn = IsbnNormalizer.NormalizeIsbn(isbn);
         await unitOfWork.BooksRepository.UpdateAsync(bookToUpdate);
         await unitOfWork.SaveChangesAsync();

@@ -54,7 +54,7 @@ public class BooksRepository(ApplicationDbContext dbContext) : IBooksRepository
                     .SetProperty(b=>b.Isbn, book.Isbn)
                     .SetProperty(b => b.Name, book.Name)
                     .SetProperty(b => b.Genre, book.Genre)
-                    .SetProperty(b => b.ImageUrl, book.ImageUrl)
+                    .SetProperty(b => b.ImagePath, book.ImagePath)
                     .SetProperty(b => b.AuthorId, book.AuthorId));
         
     }

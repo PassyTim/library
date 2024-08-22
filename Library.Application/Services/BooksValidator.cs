@@ -75,6 +75,19 @@ public class BooksValidator : AbstractValidator<BookRequest>
                 return author is not null;
             }).WithMessage("There is no author with this id");
 
+        RuleFor(b => b.Image)
+            .MustAsync(async (image, _) =>
+            {
+                List<string> validExtensions = [".jpg", ".jpeg", ".png"];
+                var extension = Path.GetExtension(image.FileName);
+                return validExtensions.Contains(extension);
+            }).WithMessage("Invalid file extension")
+            .MustAsync(async (image, _) =>
+            {
+                var size = image.Length;
+                return size < 5 * 1024 * 1024;
+            }).WithMessage("Maximum file size is 5 mb");
+        
         RuleFor(b => b.Name)
             .MaximumLength(Constants.BookNameMaxLength)
             .WithMessage($"Book name must be less than {Constants.BookNameMaxLength} symbols");

@@ -11,9 +11,11 @@ namespace Library.API.Controllers;
 [ApiController]
 [Route("api/book")]
 public class BookController(IBookService bookService,
-    IValidator<BookRequest> validator) : ControllerBase
+    IValidator<BookRequest> validator, 
+    IConfiguration configuration) : ControllerBase
 {
     private readonly ApiResponse _response = new();
+    private readonly string _baseUrl = configuration["ImageBaseUrl"]!;
     
     [HttpGet(Name = "GetAllBooks")]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -22,7 +24,14 @@ public class BookController(IBookService bookService,
         Pagination pagination = new Pagination { PageSize = pageSize, PageNumber = pageNumber };
         Response.Headers.Append("Pagination", JsonConvert.SerializeObject(pagination));
             
-        _response.Data = await bookService.GetAll(pageSize:pageSize, pageNumber:pageNumber);
+        var books = await bookService.GetAll(pageSize:pageSize, pageNumber:pageNumber);
+        foreach (var item in books)
+        {
+            var imagePath = item.ImageUrl;
+            item.ImageUrl = _baseUrl + imagePath;
+        }
+        
+        _response.Data = books;
         _response.StatusCode = HttpStatusCode.OK;
         return Ok(_response);
     }
@@ -33,7 +42,11 @@ public class BookController(IBookService bookService,
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<ApiResponse>> GetById(int id)
     {
-        _response.Data = await bookService.GetById(id);
+        var book = await bookService.GetById(id);
+        var imagePath = book.ImageUrl;
+        book.ImageUrl = _baseUrl + imagePath;
+        
+        _response.Data = book;
         
         if (_response.Data is null)
         {
@@ -59,7 +72,11 @@ public class BookController(IBookService bookService,
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<ApiResponse>> GetByIsbn(string isbn)
     {
-        _response.Data = await bookService.GetByIsbn(isbn);
+        var book = await bookService.GetByIsbn(isbn);
+        var imagePath = book.ImageUrl;
+        book.ImageUrl = _baseUrl + imagePath;
+        
+        _response.Data = book;
         if (!IsbnValidator.Validate(isbn))
         {
             _response.Errors.Add("ISBN is not valid");
@@ -83,12 +100,11 @@ public class BookController(IBookService bookService,
     [HttpPost(Name = "CreateBook")]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<ApiResponse>> Create([FromBody] BookRequest bookCreateRequest)
+    public async Task<ActionResult<ApiResponse>> Create([FromForm] BookRequest bookCreateRequest)
     {
         var context = new ValidationContext<BookRequest>(bookCreateRequest);
         context.RootContextData["IsCreate"] = true;
         var validationResult = await validator.ValidateAsync(context);
-        
         if (!validationResult.IsValid)
         {
             foreach (var item in validationResult.Errors)
@@ -112,7 +128,7 @@ public class BookController(IBookService bookService,
     [HttpPut("{id:int}",Name = "UpdateBook")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<ApiResponse>> Update(int id,[FromBody] BookRequest bookUpdateRequest)
+    public async Task<ActionResult<ApiResponse>> Update(int id,[FromForm] BookRequest bookUpdateRequest)
     { 
         var context = new ValidationContext<BookRequest>(bookUpdateRequest);
         context.RootContextData["Id"] = id;

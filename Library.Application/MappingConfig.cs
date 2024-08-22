@@ -9,13 +9,19 @@ public class MappingConfig : Profile
 {
     public MappingConfig()
     {
-        CreateMap<Book, BookResponse>(MemberList.None).ReverseMap()
+        CreateMap<Book, BookResponse>().ReverseMap()
+            .ForMember(dest=> dest.ImagePath, 
+                opt => opt.MapFrom(src => src.ImageUrl))
             .ForMember(b => b.Author,
                 opts => opts.Ignore())
             .ForMember(b => b.TakeDate,
                 opts => opts.Ignore())
             .ForMember(b => b.ReturnDate,
                 opts => opts.Ignore());
+
+        CreateMap<BookResponse, Book>().ReverseMap()
+            .ForMember(dest => dest.ImageUrl,
+                opt => opt.MapFrom(src => src.ImagePath));
             
         CreateMap<BookRequest, Book>().ReverseMap();
 

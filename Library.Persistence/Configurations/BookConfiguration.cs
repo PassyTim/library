@@ -21,10 +21,10 @@ public class BookConfiguration : IEntityTypeConfiguration<Book>
             {
                 Id = 1,
                 Isbn = "9785171183661",
-                Name = "Eugene Onegin",
-                Genre = "Novel",
-                Description = "A novel in verse by Alexander Pushkin.",
-                ImageUrl = "https://example.com/eugene_onegin.jpg",
+                Name = "Евгений Онегин",
+                Genre = "Новелла",
+                Description = "Новелла, написанная Александром Пушкиным",
+                ImagePath = "8fb16b40-17d4-43fa-b3fa-20238b342ad3.jpg",
                 AuthorId = 1
             },
             new Book
@@ -32,39 +32,39 @@ public class BookConfiguration : IEntityTypeConfiguration<Book>
                 Id = 2,
                 Isbn = "9781101948294",
                 Name = "The Shining",
-                Genre = "Horror",
-                Description = "A horror novel by Stephen King.",
-                ImageUrl = "https://example.com/the_shining.jpg",
+                Genre = "Хоррор",
+                Description = "Хоррор, написанный Стивеном Кингом",
+                ImagePath = "theShining.jpg",
                 AuthorId = 2
             },
             new Book
             {
                 Id = 3,
                 Isbn = "9785171183685",
-                Name = "Crime and Punishment",
-                Genre = "Philosophical Novel",
-                Description = "A philosophical novel by Fyodor Dostoevsky.",
-                ImageUrl = "https://example.com/crime_and_punishment.jpg",
+                Name = "Преступление и наказание",
+                Genre = "Философская новелла",
+                Description = "Философская новелла, написанная Федором Достоевским.",
+                ImagePath = "95a036bc205187af0456953a28ccccb1.jpeg",
                 AuthorId = 3
             },
             new Book
             {
                 Id = 4,
                 Isbn = "9785171183708",
-                Name = "The Brothers Karamazov",
-                Genre = "Philosophical Novel",
-                Description = "A philosophical novel by Fyodor Dostoevsky.",
-                ImageUrl = "https://example.com/brothers_karamazov.jpg",
+                Name = "Братья Карамазовы",
+                Genre = "Философская новелла",
+                Description = "Философская новелла, написанная Федором Достоевским.",
+                ImagePath = "a6d50e17-c422-4c07-b73d-3b9e722fa1bb.jpg",
                 AuthorId = 3
             },
             new Book
             {
                 Id = 5,
                 Isbn = "9780743273565",
-                Name = "It",
-                Genre = "Horror",
-                Description = "A horror novel by Stephen King.",
-                ImageUrl = "https://example.com/it.jpg",
+                Name = "Оно",
+                Genre = "Хоррор",
+                Description = "Хоррор, написанный Стивеном Кингом",
+                ImagePath = "i750566.jpg",
                 AuthorId = 2
             });
     }
