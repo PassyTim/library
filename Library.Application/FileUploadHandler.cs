@@ -12,7 +12,7 @@ public class FileUploadHandler
         }
         
         var fileName = Guid.NewGuid() + Path.GetExtension(file.FileName);
-        var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/Uploads");
+        var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/Uploads/");
 
         using FileStream stream = new FileStream(uploadsFolder  + fileName, FileMode.Create);
         file.CopyTo(stream);

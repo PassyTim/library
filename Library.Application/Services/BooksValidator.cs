@@ -78,12 +78,14 @@ public class BooksValidator : AbstractValidator<BookRequest>
         RuleFor(b => b.Image)
             .MustAsync(async (image, _) =>
             {
+                if (image is null) return true;
                 List<string> validExtensions = [".jpg", ".jpeg", ".png"];
                 var extension = Path.GetExtension(image.FileName);
                 return validExtensions.Contains(extension);
             }).WithMessage("Invalid file extension")
             .MustAsync(async (image, _) =>
             {
+                if (image is null) return true;
                 var size = image.Length;
                 return size < 5 * 1024 * 1024;
             }).WithMessage("Maximum file size is 5 mb");

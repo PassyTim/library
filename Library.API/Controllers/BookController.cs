@@ -22,15 +22,18 @@ public class BookController(IBookService bookService,
     public async Task<ActionResult<ApiResponse>> GetAllBooks(int pageSize = 0, int pageNumber = 1)
     {
         Pagination pagination = new Pagination { PageSize = pageSize, PageNumber = pageNumber };
-        Response.Headers.Append("Pagination", JsonConvert.SerializeObject(pagination));
-            
+        Response.Headers.Append("x-pagination", JsonConvert.SerializeObject(pagination));
+
+        var allBooks = await bookService.GetAll();
         var books = await bookService.GetAll(pageSize:pageSize, pageNumber:pageNumber);
         foreach (var item in books)
         {
             var imagePath = item.ImageUrl;
             item.ImageUrl = _baseUrl + imagePath;
         }
-        
+
+        Response.Headers.Append("x-count", allBooks.Count.ToString());
+            
         _response.Data = books;
         _response.StatusCode = HttpStatusCode.OK;
         return Ok(_response);
