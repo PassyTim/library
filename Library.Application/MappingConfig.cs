@@ -13,10 +13,6 @@ public class MappingConfig : Profile
             .ForMember(dest=> dest.ImagePath, 
                 opt => opt.MapFrom(src => src.ImageUrl))
             .ForMember(b => b.Author,
-                opts => opts.Ignore())
-            .ForMember(b => b.TakeDate,
-                opts => opts.Ignore())
-            .ForMember(b => b.ReturnDate,
                 opts => opts.Ignore());
 
         CreateMap<BookResponse, Book>().ReverseMap()
@@ -27,5 +23,9 @@ public class MappingConfig : Profile
 
         CreateMap<AuthorRequest, Author>().ReverseMap();
         CreateMap<AuthorResponse, Author>().ReverseMap();
+
+        CreateMap<User, UserRegisterRequest>().ReverseMap();
+        CreateMap<User, UserLoginRequest>().ReverseMap();
+        CreateMap<User, ResponseUser>().ReverseMap();
     }
 }

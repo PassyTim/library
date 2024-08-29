@@ -2,6 +2,7 @@ using System.Net;
 using FluentValidation;
 using Library.Application.Contracts;
 using Library.Application.IServices;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
@@ -15,6 +16,7 @@ public class AuthorController(
 {
     private readonly ApiResponse _response = new();
     
+    [Authorize(Roles = "Admin")]
     [HttpGet(Name = "GetAllAuthors")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult<ApiResponse>> GetAll(int pageSize = 0, int pageNumber = 1)

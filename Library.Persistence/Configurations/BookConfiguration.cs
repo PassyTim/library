@@ -11,7 +11,9 @@ public class BookConfiguration : IEntityTypeConfiguration<Book>
     {
         builder.HasKey(p => p.Id);
         builder.HasIndex(p => p.Isbn).IsUnique();
-        
+
+        builder.Property(p => p.AvailableCount).IsRequired();
+        builder.Property(p => p.TotalCount).IsRequired();
         builder.Property(p => p.Name).IsRequired().HasMaxLength(Constants.BookNameMaxLength);
         builder.Property(p => p.Isbn).IsRequired().HasMaxLength(Constants.BookIsbnMaxLength);
         builder.Property(p => p.Genre).IsRequired().HasMaxLength(Constants.BookGenreMaxLength);
@@ -25,7 +27,9 @@ public class BookConfiguration : IEntityTypeConfiguration<Book>
                 Genre = "Новелла",
                 Description = "Новелла, написанная Александром Пушкиным",
                 ImagePath = "8fb16b40-17d4-43fa-b3fa-20238b342ad3.jpg",
-                AuthorId = 1
+                AuthorId = 1,
+                TotalCount = 3,
+                AvailableCount = 3
             },
             new Book
             {
@@ -35,7 +39,9 @@ public class BookConfiguration : IEntityTypeConfiguration<Book>
                 Genre = "Хоррор",
                 Description = "Хоррор, написанный Стивеном Кингом",
                 ImagePath = "theShining.jpg",
-                AuthorId = 2
+                AuthorId = 2,
+                TotalCount = 3,
+                AvailableCount = 3
             },
             new Book
             {
@@ -45,7 +51,9 @@ public class BookConfiguration : IEntityTypeConfiguration<Book>
                 Genre = "Философская новелла",
                 Description = "Философская новелла, написанная Федором Достоевским.",
                 ImagePath = "95a036bc205187af0456953a28ccccb1.jpeg",
-                AuthorId = 3
+                AuthorId = 3,
+                TotalCount = 3,
+                AvailableCount = 3
             },
             new Book
             {
@@ -55,7 +63,9 @@ public class BookConfiguration : IEntityTypeConfiguration<Book>
                 Genre = "Философская новелла",
                 Description = "Философская новелла, написанная Федором Достоевским.",
                 ImagePath = "a6d50e17-c422-4c07-b73d-3b9e722fa1bb.jpg",
-                AuthorId = 3
+                AuthorId = 3,
+                TotalCount = 3,
+                AvailableCount = 3
             },
             new Book
             {
@@ -65,7 +75,9 @@ public class BookConfiguration : IEntityTypeConfiguration<Book>
                 Genre = "Хоррор",
                 Description = "Хоррор, написанный Стивеном Кингом",
                 ImagePath = "i750566.jpg",
-                AuthorId = 2
+                AuthorId = 2,
+                TotalCount = 3,
+                AvailableCount = 3
             });
     }
 }

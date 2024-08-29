@@ -8,6 +8,7 @@ public class UnitOfWork : IUnitOfWork
     private readonly ApplicationDbContext _dbContext;
     private IBooksRepository? _booksRepository;
     private IAuthorsRepository? _authorsRepository;
+    private IUsersRepository? _usersRepository;
     private bool _isDisposed;
 
     public UnitOfWork(ApplicationDbContext dbContext)
@@ -25,6 +26,19 @@ public class UnitOfWork : IUnitOfWork
             }
 
             return _booksRepository;
+        }
+    }
+    
+    public IUsersRepository UsersRepository
+    {
+        get
+        {
+            if (_usersRepository is null)
+            {
+                _usersRepository = new UsersRepository(_dbContext);
+            }
+
+            return _usersRepository;
         }
     }
 

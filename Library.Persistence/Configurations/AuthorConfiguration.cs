@@ -24,23 +24,23 @@ public class AuthorConfiguration : IEntityTypeConfiguration<Author>
             new Author
             {
                 Id = 1,
-                FirstName = "Aleksandr",
-                LastName = "Pushkin",
-                Country = "Russia"
+                FirstName = "Александр",
+                LastName = "Пушкин",
+                Country = "Россия"
             },
             new Author
             {
                 Id = 2,
-                FirstName = "Steven",
-                LastName = "King",
-                Country = "USA"
+                FirstName = "Стивен",
+                LastName = "Кинг",
+                Country = "США"
             },
             new Author
             {
                 Id = 3,
-                FirstName = "Fedor",
-                LastName = "Dostoevskiy",
-                Country = "Russia"
+                FirstName = "Федор",
+                LastName = "Достоевский",
+                Country = "Россия"
             });
     }
 }

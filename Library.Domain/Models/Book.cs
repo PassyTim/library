@@ -10,6 +10,6 @@ public class Book
     public string ImagePath { get; set; }
     public int AuthorId { get; set; }
     public Author Author { get; set; }
-    public DateTime TakeDate { get; set; }
-    public DateTime ReturnDate { get; set; }
+    public int TotalCount { get; set; }
+    public int AvailableCount { get; set; }
 }
