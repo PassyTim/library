@@ -5,7 +5,7 @@ using Library.Domain.Models;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
-namespace Library.Infrastructure;
+namespace Library.Infrastructure.JwtProvider;
 
 public class JwtProvider(IOptions<JwtOptions> options) : IJwtProvider
 {
@@ -31,5 +31,30 @@ public class JwtProvider(IOptions<JwtOptions> options) : IJwtProvider
         var stringToken = tokenHandler.WriteToken(token);
 
         return stringToken;
+    }
+
+    public ClaimsPrincipal GetPrincipalFromExpiredToken(string token)
+    {
+        var tokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = false,
+            ValidateAudience = false,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_options.SecretKey))
+        };
+
+        var tokenHandler = new JwtSecurityTokenHandler();
+        SecurityToken securityToken;
+        var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out securityToken);
+        var jwtSecurityToken = securityToken as JwtSecurityToken;
+
+        if (jwtSecurityToken is null || !jwtSecurityToken.Header.Alg
+                .Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCulture))
+        {
+            throw new SecurityTokenException("InvalidToken");
+        }
+
+        return principal;
     }
 }

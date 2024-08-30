@@ -1,5 +1,6 @@
 using System.Text;
 using Library.Infrastructure;
+using Library.Infrastructure.JwtProvider;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -33,7 +34,14 @@ public static class ApiExtensions
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.SecretKey))
                 };
             });
-        services.AddAuthorization();
+        
+        services.AddAuthorization(options =>
+        {
+            options.AddPolicy("AdminPolicy", policy =>
+            {
+                policy.RequireRole("Admin");
+            });
+        });
     }
     
     public static void AddSwagger(this IServiceCollection services)

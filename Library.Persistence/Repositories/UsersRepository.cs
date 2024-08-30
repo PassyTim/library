@@ -14,4 +14,13 @@ public class UsersRepository(ApplicationDbContext dbContext) : IUsersRepository
 
         return user;
     }
+
+    public async Task<User> GetByRefreshToken(string refreshToken)
+    {
+        var user = await dbContext.Users
+            .AsNoTracking()
+            .FirstOrDefaultAsync(u => u.RefreshToken == refreshToken);
+
+        return user;
+    }
 }

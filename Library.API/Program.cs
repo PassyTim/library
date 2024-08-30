@@ -6,7 +6,7 @@ using Library.Application.IServices;
 using Library.Application.Services;
 using Library.Domain.IRepositories;
 using Library.Domain.Models;
-using Library.Infrastructure;
+using Library.Infrastructure.JwtProvider;
 using Library.Persistence;
 using Library.Persistence.Repositories;
 using Microsoft.AspNetCore.Http.Features;
@@ -50,6 +50,12 @@ services.AddIdentity<User, IdentityRole>()
 
 services.AddApiAuthentication(builder.Configuration);
 
+services.ConfigureApplicationCookie(options =>
+{
+    options.Cookie.HttpOnly = true;
+    options.ExpireTimeSpan = TimeSpan.FromMinutes(10);
+});
+
 services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
@@ -57,6 +63,7 @@ services.AddCors(options =>
         policy.WithOrigins("http://localhost:3000");
         policy.AllowAnyHeader();
         policy.AllowAnyMethod();
+        policy.AllowCredentials();
         policy.WithExposedHeaders("x-count");
         policy.WithExposedHeaders("x-pagination");
     });

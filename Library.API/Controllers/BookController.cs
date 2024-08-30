@@ -3,6 +3,7 @@ using FluentValidation;
 using Library.Application;
 using Library.Application.Contracts;
 using Library.Application.IServices;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
@@ -17,8 +18,10 @@ public class BookController(IBookService bookService,
     private readonly ApiResponse _response = new();
     private readonly string _baseUrl = configuration["ImageBaseUrl"]!;
     
+    [Authorize]
     [HttpGet(Name = "GetAllBooks")]
     [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<ActionResult<ApiResponse>> GetAllBooks(int pageSize = 0, int pageNumber = 1)
     {
         Pagination pagination = new Pagination { PageSize = pageSize, PageNumber = pageNumber };
@@ -39,10 +42,12 @@ public class BookController(IBookService bookService,
         return Ok(_response);
     }
 
+    [Authorize]
     [HttpGet("{id:int}", Name = "GetBookById")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<ActionResult<ApiResponse>> GetById(int id)
     {
         var book = await bookService.GetById(id);
@@ -69,10 +74,12 @@ public class BookController(IBookService bookService,
         return Ok(_response);
     }
 
+    [Authorize]
     [HttpGet("{isbn}", Name = "GetBookByIsbn")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<ActionResult<ApiResponse>> GetByIsbn(string isbn)
     {
         var book = await bookService.GetByIsbn(isbn);
@@ -100,9 +107,12 @@ public class BookController(IBookService bookService,
         return Ok(_response);
     }
 
+    [Authorize(Policy = "AdminPolicy")]
     [HttpPost(Name = "CreateBook")]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<ActionResult<ApiResponse>> Create([FromForm] BookRequest bookCreateRequest)
     {
         var context = new ValidationContext<BookRequest>(bookCreateRequest);
@@ -128,9 +138,12 @@ public class BookController(IBookService bookService,
         return Ok(_response);
     }
     
+    [Authorize(Policy = "AdminPolicy")]
     [HttpPut("{id:int}",Name = "UpdateBook")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<ActionResult<ApiResponse>> Update(int id,[FromForm] BookRequest bookUpdateRequest)
     { 
         var context = new ValidationContext<BookRequest>(bookUpdateRequest);
@@ -158,9 +171,12 @@ public class BookController(IBookService bookService,
         return Ok(_response);
     }
 
+    [Authorize(Policy = "AdminPolicy")]
     [HttpDelete("{id:int}", Name = "DeleteBook")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<ActionResult<ApiResponse>> Delete(int id)
     {
         var book = await bookService.GetById(id);

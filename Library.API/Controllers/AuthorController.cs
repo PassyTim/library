@@ -16,9 +16,10 @@ public class AuthorController(
 {
     private readonly ApiResponse _response = new();
     
-    [Authorize(Roles = "Admin")]
+    [Authorize]
     [HttpGet(Name = "GetAllAuthors")]
     [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<ActionResult<ApiResponse>> GetAll(int pageSize = 0, int pageNumber = 1)
     {
         Pagination pagination = new Pagination { PageSize = pageSize, PageNumber = pageNumber };
@@ -29,10 +30,12 @@ public class AuthorController(
         return Ok(_response);
     }
 
+    [Authorize]
     [HttpGet("{id:int}/{isWithBooks:bool}", Name = "GetAuthorById")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<ActionResult<ApiResponse>> GetById(int id, bool isWithBooks)
     {
         _response.Data = await service.GetById(id, isWithBooks);
@@ -55,9 +58,12 @@ public class AuthorController(
         return Ok(_response);
     }
 
+    [Authorize(Policy = "AdminPolicy")]
     [HttpPost(Name = "CreateAuthor")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<ActionResult<ApiResponse>> Create([FromBody] AuthorRequest authorCreateRequest)
     {
         var validationContext = new ValidationContext<AuthorRequest>(authorCreateRequest);
@@ -84,9 +90,12 @@ public class AuthorController(
         return Ok(_response);
     }
 
+    [Authorize(Policy = "AdminPolicy")]
     [HttpPut("{id:int}", Name = "UpdateAuthor")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<ActionResult<ApiResponse>> Update(int id, [FromBody] AuthorRequest authorUpdateRequest)
     {
         var validationContext = new ValidationContext<AuthorRequest>(authorUpdateRequest);
@@ -114,9 +123,12 @@ public class AuthorController(
         return Ok(_response);
     }
     
+    [Authorize(Policy = "AdminPolicy")]
     [HttpDelete("{id:int}", Name = "DeleteAuthor")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<ActionResult<ApiResponse>> Delete(int id)
     {
         var author = await service.GetById(id);

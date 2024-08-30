@@ -1,4 +1,4 @@
-namespace Library.Infrastructure;
+namespace Library.Infrastructure.JwtProvider;
 
 public class JwtOptions
 {
