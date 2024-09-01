@@ -1,11 +1,10 @@
 using System.Text;
-using Library.Infrastructure;
 using Library.Infrastructure.JwtProvider;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
-namespace Library.API;
+namespace Library.API.Extensions;
 
 public static class ApiExtensions
 {

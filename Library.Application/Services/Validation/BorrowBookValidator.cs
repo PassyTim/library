@@ -2,7 +2,7 @@ using FluentValidation;
 using Library.Application.Contracts;
 using Library.Persistence;
 
-namespace Library.Application.Services;
+namespace Library.Application.Services.Validation;
 
 public class BorrowBookValidator : AbstractValidator<BorrowBookRequest>
 {

@@ -6,17 +6,15 @@ using Microsoft.Extensions.Configuration;
 
 namespace Library.Persistence;
 
-public class ApplicationDbContext(IConfiguration configuration) : IdentityDbContext<User>
+public class ApplicationDbContext : IdentityDbContext<User>
 {
     public DbSet<BorrowedBook> BorrowedBooks { get; set; }
     public DbSet<User> Users { get; set; }
     public DbSet<Book> Books { get; set; }
     public DbSet<Author> Authors { get; set; }
-    
-    protected override void OnConfiguring(DbContextOptionsBuilder options)
-    {
-        options.UseSqlServer(configuration.GetConnectionString("DefaultSQLConnection"));
-    }
+
+    public ApplicationDbContext(DbContextOptions options) : base(options)
+    {}
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

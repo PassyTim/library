@@ -3,7 +3,7 @@ using Library.Application.Contracts;
 using Library.Domain;
 using Library.Domain.IRepositories;
 
-namespace Library.Application.Services;
+namespace Library.Application.Services.Validation;
 
 public class AuthorsValidator : AbstractValidator<AuthorRequest>
 {

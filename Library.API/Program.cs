@@ -1,9 +1,11 @@
 using FluentValidation;
 using Library.API;
+using Library.API.Extensions;
 using Library.API.Middlewares;
 using Library.Application;
 using Library.Application.IServices;
 using Library.Application.Services;
+using Library.Application.Services.Validation;
 using Library.Domain.IRepositories;
 using Library.Domain.Models;
 using Library.Infrastructure.JwtProvider;
@@ -11,17 +13,25 @@ using Library.Persistence;
 using Library.Persistence.Repositories;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Net.Http.Headers;
 
 var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;
 
-services.AddDbContext<ApplicationDbContext>();
+services.AddDbContext<ApplicationDbContext>(options =>
+{
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultSQLConnection"));
+});
 services.Configure<JwtOptions>(builder.Configuration.GetSection(nameof(JwtOptions)));
 
 services.AddTransient<GlobalExceptionHandlingMiddleware>();
 
 services.AddScoped<IBooksRepository, BooksRepository>();
+services.Decorate<IBooksRepository, CachedBooksRepository>();
+services.AddMemoryCache();
+
 services.AddScoped<IAuthorsRepository, AuthorsRepository>();
 services.AddScoped<IBorrowedBookRepository, BorrowedBookRepository>();
 
@@ -82,6 +92,7 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+    app.ApplyMigrations();
 }
 
 app.UseCors();

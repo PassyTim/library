@@ -41,6 +41,13 @@ public class AuthorConfiguration : IEntityTypeConfiguration<Author>
                 FirstName = "Федор",
                 LastName = "Достоевский",
                 Country = "Россия"
+            },
+            new Author
+            {
+                Id = 4,
+                FirstName = "Масаси",
+                LastName = "Кисимото",
+                Country = "Япония"
             });
     }
 }

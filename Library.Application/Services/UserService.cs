@@ -11,12 +11,12 @@ namespace Library.Application.Services;
 
 public class UserService(
     IUnitOfWork unitOfWork,
-    IMapper mapper,
     RoleManager<IdentityRole> roleManager,
     UserManager<User> userManager,
     IJwtProvider jwtProvider
 )
 {
+
     public async Task<bool> IsUserUniqueAsync(string email)
     {
         var user = await unitOfWork.UsersRepository.GetByEmail(email);
