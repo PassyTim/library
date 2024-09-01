@@ -10,6 +10,7 @@ public class UsersRepository(ApplicationDbContext dbContext) : IUsersRepository
     {
         var user = await dbContext.Users
             .AsNoTracking()
+            .Include(u=>u.BorrowedBooks)
             .FirstOrDefaultAsync(u => u.Email == email);
 
         return user;

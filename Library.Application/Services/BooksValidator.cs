@@ -97,5 +97,13 @@ public class BooksValidator : AbstractValidator<BookRequest>
         RuleFor(b => b.Genre)
             .MaximumLength(Constants.BookGenreMaxLength)
             .WithMessage($"Book genre must be less than {Constants.BookGenreMaxLength} symbols");
+
+        RuleFor(b => b.AvailableCount)
+            .MustAsync(async (availableCount, _) => availableCount >= 0)
+            .WithMessage("Available count must be greater than 0 or 0");
+        
+        RuleFor(b => b.TotalCount)
+            .MustAsync(async (totalCount, _) => totalCount >= 0)
+            .WithMessage("Total count must be greater than 0 or 0");
     }
 }

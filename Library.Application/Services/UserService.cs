@@ -5,6 +5,7 @@ using Library.Domain.Models;
 using Library.Infrastructure.JwtProvider;
 using Library.Persistence;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace Library.Application.Services;
 
@@ -77,7 +78,26 @@ public class UserService(
 
     public async Task<LoginResponse> LoginAsync(UserLoginRequest userLoginRequest, bool populateExp)
     {
+        var responseUser = await userManager.Users
+            .Where(u => u.Email == userLoginRequest.Email)
+            .Select(u => new ResponseUser
+            {
+                Id = u.Id,
+                UserName = u.UserName,
+                Email = u.Email,
+                BorrowedBooks = u.BorrowedBooks.Select(b => new BorrowedBook
+                {
+                    Id = b.Id,
+                    UserId = b.UserId,
+                    BookId = b.BookId,
+                    TakeDate = b.TakeDate,
+                    ReturnDate = b.ReturnDate
+                }).ToList()
+            })
+            .SingleOrDefaultAsync();
+
         var user = await userManager.FindByEmailAsync(userLoginRequest.Email);
+            
         if (user is null)
         {
             return new LoginResponse { User = null, AccessToken = "", RefreshToken = "" };
@@ -90,12 +110,11 @@ public class UserService(
         
         LoginResponse response = new LoginResponse
         {
-            User = mapper.Map<ResponseUser>(user),
+            User = responseUser,
             AccessToken = tokens.AccessToken,
             RefreshToken = tokens.RefreshToken
         };
-
-        await userManager.UpdateAsync(user);
+        
         return response;
     }
 
@@ -114,13 +133,14 @@ public class UserService(
             AccessToken = token,
             RefreshToken = refreshToken
         };
+        await userManager.UpdateAsync(user);
         
         return tokensToReturn;
     }
 
     public async Task<Tokens> RefreshToken(string refreshToken)
     {
-        var user = await unitOfWork.UsersRepository.GetByRefreshToken(refreshToken);
+        var user = await userManager.Users.FirstOrDefaultAsync(u => u.RefreshToken == refreshToken);
         if (user is null || user.RefreshToken != refreshToken ||
             user.RefreshTokenExpiryTime <= DateTime.Now)
         {

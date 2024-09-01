@@ -13,6 +13,8 @@ public record BookResponse(
     [Required] [MaxLength(Constants.BookGenreMaxLength)]
     string Genre,
     string Description,
+    int TotalCount,
+    int AvailableCount,
     int AuthorId)
 {
     public string ImageUrl { get; set; }

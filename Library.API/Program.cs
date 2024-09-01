@@ -11,6 +11,7 @@ using Library.Persistence;
 using Library.Persistence.Repositories;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Net.Http.Headers;
 
 var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;
@@ -22,11 +23,13 @@ services.AddTransient<GlobalExceptionHandlingMiddleware>();
 
 services.AddScoped<IBooksRepository, BooksRepository>();
 services.AddScoped<IAuthorsRepository, AuthorsRepository>();
+services.AddScoped<IBorrowedBookRepository, BorrowedBookRepository>();
 
 services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 services.AddScoped<IBookService, BookService>();
 services.AddScoped<IAuthorService, AuthorService>();
+services.AddScoped<IBorrowBookService, BorrowBookService>();
 services.AddScoped<UserService>();
 
 services.AddScoped<IJwtProvider, JwtProvider>();
@@ -40,7 +43,9 @@ services.Configure<FormOptions>(options =>
 });
 services.AddHttpContextAccessor();
 
-services.AddControllers();
+services.AddControllers().AddNewtonsoftJson(options =>
+    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+
 services.AddEndpointsApiExplorer();
 services.AddSwaggerGen();
 services.AddSwagger();
@@ -66,6 +71,8 @@ services.AddCors(options =>
         policy.AllowCredentials();
         policy.WithExposedHeaders("x-count");
         policy.WithExposedHeaders("x-pagination");
+        policy.WithExposedHeaders("Authorization");
+        policy.WithExposedHeaders("Cache-Control");
     });
 });
 
@@ -80,7 +87,15 @@ if (app.Environment.IsDevelopment())
 app.UseCors();
 
 app.UseHttpsRedirection();
-app.UseStaticFiles();
+app.UseStaticFiles(new StaticFileOptions
+{
+    OnPrepareResponse = ctx =>
+    {
+        const int durationInSeconds = 60 * 60 * 24;
+        ctx.Context.Response.Headers[HeaderNames.CacheControl] = "public,max-age=" + durationInSeconds;
+        ctx.Context.Response.Headers[HeaderNames.Expires] = new[] { DateTime.UtcNow.AddYears(1).ToString("R") };
+    }
+});
 
 app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
 

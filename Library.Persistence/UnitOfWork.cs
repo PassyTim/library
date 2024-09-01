@@ -1,4 +1,5 @@
 using Library.Domain.IRepositories;
+using Library.Domain.Models;
 using Library.Persistence.Repositories;
 
 namespace Library.Persistence;
@@ -9,6 +10,7 @@ public class UnitOfWork : IUnitOfWork
     private IBooksRepository? _booksRepository;
     private IAuthorsRepository? _authorsRepository;
     private IUsersRepository? _usersRepository;
+    private IBorrowedBookRepository? _borrowedBookRepository;
     private bool _isDisposed;
 
     public UnitOfWork(ApplicationDbContext dbContext)
@@ -26,6 +28,19 @@ public class UnitOfWork : IUnitOfWork
             }
 
             return _booksRepository;
+        }
+    }
+    
+    public IBorrowedBookRepository BorrowedBookRepository
+    {
+        get
+        {
+            if (_borrowedBookRepository is null)
+            {
+                _borrowedBookRepository = new BorrowedBookRepository(_dbContext);
+            }
+
+            return _borrowedBookRepository;
         }
     }
     

@@ -23,7 +23,7 @@ public class JwtProvider(IOptions<JwtOptions> options) : IJwtProvider
                 new(ClaimTypes.Name, user.Id.ToString()),
                 new(ClaimTypes.Role, roles.FirstOrDefault())
             }),
-            Expires = DateTime.UtcNow.AddDays(_options.ExpiresDays),
+            Expires = DateTime.UtcNow.AddMinutes(_options.ExpiresMin),
             SigningCredentials = new (new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256)
         };
 

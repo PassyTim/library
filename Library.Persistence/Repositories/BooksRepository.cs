@@ -51,12 +51,14 @@ public class BooksRepository(ApplicationDbContext dbContext) : IBooksRepository
             .Where(b => b.Id == book.Id)
             .ExecuteUpdateAsync(s =>
                 s.SetProperty(b => b.Description, book.Description)
-                    .SetProperty(b=>b.Isbn, book.Isbn)
+                    .SetProperty(b => b.Isbn, book.Isbn)
                     .SetProperty(b => b.Name, book.Name)
                     .SetProperty(b => b.Genre, book.Genre)
                     .SetProperty(b => b.ImagePath, book.ImagePath)
-                    .SetProperty(b => b.AuthorId, book.AuthorId));
-        
+                    .SetProperty(b => b.AuthorId, book.AuthorId)
+                    .SetProperty(b=>b.AvailableCount, book.AvailableCount)
+                    .SetProperty(b=>b.TotalCount, book.TotalCount));
+
     }
 
     public async Task RemoveAsync(int bookId)

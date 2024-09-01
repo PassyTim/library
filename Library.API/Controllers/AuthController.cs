@@ -41,7 +41,7 @@ public class AuthController(UserService userService) : ControllerBase
     {
         var loginResponse = await userService.LoginAsync(userLoginRequest, true);
         
-        HttpContext.Response.Headers.Authorization = loginResponse.AccessToken;
+        HttpContext.Response.Headers["Authorization"] = loginResponse.AccessToken;
         HttpContext.Response.Cookies.Append("refreshToken", loginResponse.RefreshToken, new CookieOptions
         {
             Expires = DateTimeOffset.UtcNow.AddDays(7),

@@ -10,4 +10,6 @@ public record BookRequest(
     [Required] string Genre,
     string Description,
     int AuthorId, 
+    [Required] int AvailableCount,
+    [Required] int TotalCount,
     IFormFile? Image);
