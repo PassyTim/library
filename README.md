@@ -49,7 +49,7 @@ Make appsettings.json file and put it into Library.Api directory
   "JwtOptions" : {
     "ExpiresMin" : 15,
     "SecretKey" : "secretkeysecretkeysecretkeysecretkeysecretkeysecretkeysecretkeysecretkeysecretkey"
-  }
+  },
   "ConnectionStrings": {
     "DefaultSQLConnection" : "YOUR_CONNECTION_STRING_TO_SQL_SERVER"
   }
