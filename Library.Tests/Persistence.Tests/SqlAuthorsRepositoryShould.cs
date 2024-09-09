@@ -2,6 +2,7 @@ using Library.Domain.Models;
 using Library.Persistence;
 using Library.Persistence.Repositories;
 using Microsoft.EntityFrameworkCore;
+using Xunit;
 
 namespace Library.Tests.Persistence.Tests;
 
@@ -81,8 +82,6 @@ public class SqlAuthorsRepositoryShould
                 Genre = "test",
                 Isbn = "9781234567898",
                 Description = "test",
-                AvailableCount = 2,
-                TotalCount = 2,
                 ImagePath = "test"
             };
         
@@ -91,7 +90,7 @@ public class SqlAuthorsRepositoryShould
         await _context.SaveChangesAsync();
 
         // Act
-        var returnAuthor = await repository.GetByIdWithBooks(_author1.Id);
+        var returnAuthor = await repository.GetById(_author1.Id);
 
         // Assert
         Assert.NotNull(returnAuthor);

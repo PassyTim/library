@@ -4,9 +4,9 @@ using Library.Domain;
 namespace Library.Application.Contracts;
 
 public record AuthorResponse(
-    [Required] int Id,
-    [Required][MaxLength(Constants.AuthorFirstNameMaxLength)] string FirstName,
-    [Required][MaxLength(Constants.AuthorLastNameMaxLength)] string LastName,
-    [MaxLength(Constants.AuthorCountryMaxLength)] string Country,
+    int Id,
+    string FirstName,
+    string LastName,
+    string Country,
     DateTime BirthDate,
     List<BookResponse> Books);

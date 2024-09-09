@@ -2,6 +2,7 @@ using System.Linq.Expressions;
 using Library.Domain.IRepositories;
 using Library.Domain.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Library.Persistence.Repositories;
 
@@ -16,8 +17,6 @@ public class BooksRepository(ApplicationDbContext dbContext) : IBooksRepository
         
         if (pageSize > 0)
         {
-            if (pageSize > 100) pageSize = 100;
-
             query = query.Skip(pageSize * (pageNumber - 1)).Take(pageSize);
         }
         
@@ -56,8 +55,9 @@ public class BooksRepository(ApplicationDbContext dbContext) : IBooksRepository
                     .SetProperty(b => b.Genre, book.Genre)
                     .SetProperty(b => b.ImagePath, book.ImagePath)
                     .SetProperty(b => b.AuthorId, book.AuthorId)
-                    .SetProperty(b=>b.AvailableCount, book.AvailableCount)
-                    .SetProperty(b=>b.TotalCount, book.TotalCount));
+                    .SetProperty(b=>b.UserId, book.UserId)
+                    .SetProperty(b=>b.ReturnDate, book.ReturnDate)
+                    .SetProperty(b=>b.TakeDate, book.TakeDate));
 
     }
 
@@ -71,6 +71,17 @@ public class BooksRepository(ApplicationDbContext dbContext) : IBooksRepository
     public async Task<bool> IsBookWithIdExists(int id)
     {
         return await dbContext.Books.AnyAsync(b => b.Id == id);
+    }
+
+    public async Task<bool> IsBookTaken(int id)
+    {
+        var book = await dbContext.Books.FirstOrDefaultAsync(b => b.Id == id);
+        if (book.UserId.IsNullOrEmpty())
+        {
+            return true;
+        }
+
+        return false;
     }
 
     public async Task<bool> IsIsbnUnique(string isbn)

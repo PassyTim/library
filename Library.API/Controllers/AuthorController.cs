@@ -36,9 +36,9 @@ public class AuthorController(
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult<ApiResponse>> GetById(int id, bool isWithBooks)
+    public async Task<ActionResult<ApiResponse>> GetById(int id)
     {
-        _response.Data = await service.GetById(id, isWithBooks);
+        _response.Data = await service.GetById(id);
         
         if (_response.Data is null)
         {

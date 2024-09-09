@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 namespace Library.Application.Contracts;
 
 public record BorrowBookRequest(
-    [Required] string UserId,
-    [Required] int BookId,
-    [Required] DateTime ReturnDate
+    string UserId,
+    int BookId,
+    DateTime ReturnDate
     );

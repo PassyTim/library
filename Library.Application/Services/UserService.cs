@@ -48,8 +48,10 @@ public class UserService(
                 {
                     await userManager.AddToRoleAsync(userToCreate, "Admin");
                 }
-
-                await userManager.AddToRoleAsync(userToCreate, "User");
+                else
+                {
+                    await userManager.AddToRoleAsync(userToCreate, "User");
+                }
 
                 var userToReturn = await unitOfWork.UsersRepository.GetByEmail(userRegisterRequest.Email);
                 if (userToReturn is not null)
@@ -85,11 +87,10 @@ public class UserService(
                 Id = u.Id,
                 UserName = u.UserName,
                 Email = u.Email,
-                BorrowedBooks = u.BorrowedBooks.Select(b => new BorrowedBook
+                BorrowedBooks = u.BorrowedBooks.Select(b => new Book
                 {
                     Id = b.Id,
                     UserId = b.UserId,
-                    BookId = b.BookId,
                     TakeDate = b.TakeDate,
                     ReturnDate = b.ReturnDate
                 }).ToList()

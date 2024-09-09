@@ -2,6 +2,7 @@ using Library.Domain.Models;
 using Library.Persistence;
 using Library.Persistence.Repositories;
 using Microsoft.EntityFrameworkCore;
+using Xunit;
 
 namespace Library.Tests.Persistence.Tests;
 
@@ -16,8 +17,6 @@ public class SqlBooksRepositoryShould
         Genre = "test",
         Isbn = "9781234567897",
         Description = "test",
-        AvailableCount = 1,
-        TotalCount = 1,
         ImagePath = "test"
     };
     private readonly Book _book2 = new()
@@ -28,8 +27,6 @@ public class SqlBooksRepositoryShould
         Genre = "test",
         Isbn = "9781234567898",
         Description = "test",
-        AvailableCount = 2,
-        TotalCount = 2,
         ImagePath = "test"
     };
 

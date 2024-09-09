@@ -16,8 +16,6 @@ public class AuthorsRepository(ApplicationDbContext dbContext) : IAuthorsReposit
         
         if (pageSize > 0)
         {
-            if (pageSize > 100) pageSize = 100;
-
             query = query.Skip(pageSize * (pageNumber - 1)).Take(pageSize);
         }
         
@@ -27,13 +25,6 @@ public class AuthorsRepository(ApplicationDbContext dbContext) : IAuthorsReposit
     }
 
     public async Task<Author?> GetById(int id)
-    {
-        return await dbContext.Authors
-            .AsNoTracking()
-            .FirstOrDefaultAsync(a => a.Id == id);
-    }
-
-    public async Task<Author?> GetByIdWithBooks(int id)
     {
         return await dbContext.Authors
             .AsNoTracking()

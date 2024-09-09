@@ -33,13 +33,11 @@ services.Decorate<IBooksRepository, CachedBooksRepository>();
 services.AddMemoryCache();
 
 services.AddScoped<IAuthorsRepository, AuthorsRepository>();
-services.AddScoped<IBorrowedBookRepository, BorrowedBookRepository>();
 
 services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 services.AddScoped<IBookService, BookService>();
 services.AddScoped<IAuthorService, AuthorService>();
-services.AddScoped<IBorrowBookService, BorrowBookService>();
 services.AddScoped<UserService>();
 
 services.AddScoped<IJwtProvider, JwtProvider>();

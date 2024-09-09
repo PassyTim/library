@@ -55,7 +55,7 @@ public class CachedBooksRepository(
     public async Task RemoveAsync(int bookId) => await decorated.RemoveAsync(bookId);
 
     public async Task<bool> IsBookWithIdExists(int id) => await decorated.IsBookWithIdExists(id);
-
+    public async Task<bool> IsBookTaken(int id) => await decorated.IsBookTaken(id);
     public async Task<bool> IsIsbnUnique(string isbn) => await decorated.IsIsbnUnique(isbn);
 
     public async Task<bool> IsIsbnUniqueForUpdate(string isbn, int id) =>

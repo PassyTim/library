@@ -19,19 +19,10 @@ public class AuthorService(
         return authorResponseList;
     }
 
-    public async Task<AuthorResponse> GetById(int id, bool isWithBooks = false)
+    public async Task<AuthorResponse> GetById(int id)
     {
-        Author? author;
-        AuthorResponse authorResponse;
-        if (isWithBooks)
-        {
-            author = await unitOfWork.AuthorsRepository.GetByIdWithBooks(id);
-            authorResponse = mapper.Map<AuthorResponse>(author);
-            return authorResponse;
-        }
-        
-        author = await unitOfWork.AuthorsRepository.GetById(id);
-        authorResponse = mapper.Map<AuthorResponse>(author);
+        var author = await unitOfWork.AuthorsRepository.GetById(id);
+        var authorResponse = mapper.Map<AuthorResponse>(author);
         return authorResponse;
     }
 
