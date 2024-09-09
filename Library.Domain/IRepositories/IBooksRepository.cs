@@ -11,8 +11,4 @@ public interface IBooksRepository
     Task CreateAsync(Book book);
     Task UpdateAsync(Book book);
     Task RemoveAsync(int bookId);
-    Task<bool> IsBookWithIdExists(int id);
-    Task<bool> IsBookTaken(int id);
-    Task<bool> IsIsbnUnique(string isbn);
-    Task<bool> IsIsbnUniqueForUpdate(string isbn, int id);
 }

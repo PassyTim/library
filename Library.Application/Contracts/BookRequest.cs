@@ -8,8 +8,9 @@ public record BookRequest(
     string Isbn,
     string Name,
     string Genre,
-    string Description,
-    int AuthorId, 
-    int AvailableCount,
-    int TotalCount,
+    string? Description,
+    int AuthorId,
+    string? UserId,
+    DateTime ReturnDate,
+    DateTime TakeDate,
     IFormFile? Image);

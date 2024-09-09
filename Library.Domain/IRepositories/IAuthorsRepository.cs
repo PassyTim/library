@@ -10,5 +10,4 @@ public interface IAuthorsRepository
     Task CreateAsync(Author author);
     Task UpdateAsync(Author author);
     Task RemoveAsync(int authorId);
-    Task<bool> IsAuthorWithIdExists(int id);
 }

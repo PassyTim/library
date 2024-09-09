@@ -10,6 +10,6 @@ public interface IAuthorService
         int pageSize = 0, int pageNumber = 0);
     public Task<AuthorResponse> GetById(int id);
     public Task Create(AuthorRequest authorCreateRequest);
-    public Task Update(AuthorRequest authorUpdateRequest);
+    public Task Update(AuthorRequest authorUpdateRequest, int id);
     public Task Remove(int id);
 }

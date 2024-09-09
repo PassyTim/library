@@ -99,21 +99,6 @@ public class SqlAuthorsRepositoryShould
     }
 
     [Fact]
-    public async Task CheckIfAuthorWithIdExists()
-    {
-        // Arrange
-        var repository = new AuthorsRepository(_context);
-        await repository.CreateAsync(_author1);
-        await _context.SaveChangesAsync();
-
-        // Act
-        bool exists = await repository.IsAuthorWithIdExists(_author1.Id);
-
-        // Assert
-        Assert.True(exists);
-    }
-
-    [Fact]
     public async Task GetAllAuthors()
     {
         // Arrange

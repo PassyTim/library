@@ -48,11 +48,6 @@ public class AuthorsRepository(ApplicationDbContext dbContext) : IAuthorsReposit
                     .SetProperty(a => a.LastName, author.LastName)
                     .SetProperty(a => a.BirthDate, author.BirthDate));
     }
-    
-    public async Task<bool> IsAuthorWithIdExists(int id)
-    {
-        return await dbContext.Authors.AnyAsync(a => a.Id == id);
-    }
 
     public async Task RemoveAsync(int authorId)
     {

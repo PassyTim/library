@@ -1,4 +1,5 @@
 using System.Net;
+using FluentValidation;
 using Library.Application.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -13,6 +14,48 @@ public class GlobalExceptionHandlingMiddleware : IMiddleware
         {
             await next(context);
         }
+        catch (AuthenticationException authException)
+        {
+            context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+
+            ProblemDetails problemDetails = new()
+            {
+                Status = (int)HttpStatusCode.BadRequest,
+                Type = "Authentication error",
+                Title = "Authentication error",
+                Detail = authException.Message
+            };
+
+            HandleException(context, problemDetails);
+        }
+        catch (TokenException tokenException)
+        {
+            context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+
+            ProblemDetails problemDetails = new()
+            {
+                Status = (int)HttpStatusCode.BadRequest,
+                Type = "Token error",
+                Title = "Token error",
+                Detail = tokenException.Message
+            };
+
+            HandleException(context, problemDetails);
+        }
+        catch (ValidationException validationException)
+        {
+            context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+
+            ProblemDetails problemDetails = new()
+            {
+                Status = (int)HttpStatusCode.BadRequest,
+                Type = "Validation error",
+                Title = "Validation error",
+                Detail = validationException.Message
+            };
+
+            HandleException(context, problemDetails);
+        }
         catch (ItemNotFoundException notFoundException)
         {
             context.Response.StatusCode = (int)HttpStatusCode.NotFound;
@@ -20,14 +63,12 @@ public class GlobalExceptionHandlingMiddleware : IMiddleware
             ProblemDetails problemDetails = new()
             {
                 Status = (int)HttpStatusCode.NotFound,
-                Type = "Item not found",
+                Type = "Request error",
                 Title = "Item not found",
-                Detail = "The server cannot find the requested resource."
+                Detail = notFoundException.Message
             };
 
-            var jsonProblem = JsonConvert.SerializeObject(problemDetails);
-            context.Response.ContentType = "application/json";
-            await context.Response.WriteAsync(jsonProblem);
+            HandleException(context, problemDetails);
         }
         catch (Exception e)
         {
@@ -41,9 +82,14 @@ public class GlobalExceptionHandlingMiddleware : IMiddleware
                 Detail = "An internal server error has occured"
             };
 
-            var jsonProblem = JsonConvert.SerializeObject(problemDetails);
-            context.Response.ContentType = "application/json";
-            await context.Response.WriteAsync(jsonProblem);
+            HandleException(context, problemDetails);
         }
+    }
+
+    private async void HandleException(HttpContext context, ProblemDetails problemDetails)
+    {
+        var jsonProblem = JsonConvert.SerializeObject(problemDetails);
+        context.Response.ContentType = "application/json";
+        await context.Response.WriteAsync(jsonProblem);
     }
 }

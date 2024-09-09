@@ -17,6 +17,8 @@ public class AuthorService(
     public async Task<List<AuthorResponse>> GetAll(Expression<Func<Author, bool>>? filter = null,
         int pageSize = 0, int pageNumber = 0)
     {
+        if (pageSize > 100) pageSize = 100;
+        
         var authors = await unitOfWork.AuthorsRepository.GetAllAsync(filter, pageSize, pageNumber);
         var authorResponseList = mapper.Map<List<AuthorResponse>>(authors);
         return authorResponseList;
@@ -28,8 +30,9 @@ public class AuthorService(
         
         if (author is null)
         {
-            throw new ItemNotFoundException();
+            throw new ItemNotFoundException($"Author with id:{id} not found");
         }
+        
         var authorResponse = mapper.Map<AuthorResponse>(author);
         return authorResponse;
     }
@@ -38,19 +41,31 @@ public class AuthorService(
     {
         var validationContext = new ValidationContext<AuthorRequest>(authorCreateRequest);
         validationContext.RootContextData["IsCreate"] = true;
-        await validator.ValidateAsync(validationContext);
+        var validationResult = await validator.ValidateAsync(validationContext);
+        
+        if (!validationResult.IsValid)
+        {
+            var errorMessages = validationResult.Errors.Select(x => x.ErrorMessage);
+            throw new ValidationException(string.Join(". ", errorMessages));
+        }
         
         var authorToCreate = mapper.Map<Author>(authorCreateRequest);
         await unitOfWork.AuthorsRepository.CreateAsync(authorToCreate);
         await unitOfWork.SaveChangesAsync();
     }
 
-    public async Task Update(AuthorRequest authorUpdateRequest)
+    public async Task Update(AuthorRequest authorUpdateRequest, int id)
     {
         var validationContext = new ValidationContext<AuthorRequest>(authorUpdateRequest);
         validationContext.RootContextData["IsUpdate"] = true;
-        validationContext.RootContextData["Id"] = authorUpdateRequest.Id;
-        await validator.ValidateAsync(validationContext);
+        validationContext.RootContextData["Id"] = id;
+        var validationResult = await validator.ValidateAsync(validationContext);
+
+        if (!validationResult.IsValid)
+        {
+            var errorMessages = validationResult.Errors.Select(x => x.ErrorMessage);
+            throw new ValidationException(string.Join(". ", errorMessages));
+        }
         
         var authorToUpdate = mapper.Map<Author>(authorUpdateRequest);
         await unitOfWork.AuthorsRepository.UpdateAsync(authorToUpdate);
@@ -62,8 +77,9 @@ public class AuthorService(
         var author = await unitOfWork.AuthorsRepository.GetById(id);
         if (author is null)
         {
-            throw new ItemNotFoundException();
+            throw new ItemNotFoundException($"Author with id:{id} not found");
         }
+        
         await unitOfWork.AuthorsRepository.RemoveAsync(id);
     }
 }

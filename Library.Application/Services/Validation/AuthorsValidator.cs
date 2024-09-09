@@ -3,6 +3,7 @@ using FluentValidation.Results;
 using Library.Application.Contracts;
 using Library.Domain;
 using Library.Domain.IRepositories;
+using Library.Persistence;
 
 namespace Library.Application.Services.Validation;
 
@@ -14,7 +15,7 @@ public class AuthorsValidator : AbstractValidator<AuthorRequest>
         throw new ArgumentException(ex.Message, ex);
     }
 
-    public AuthorsValidator(IAuthorsRepository repository)
+    public AuthorsValidator(IUnitOfWork unitOfWork)
     {
         RuleFor(a => a.Id)
             .CustomAsync(async (id, context, _) =>
@@ -31,7 +32,8 @@ public class AuthorsValidator : AbstractValidator<AuthorRequest>
             {
                 if (context.RootContextData.TryGetValue("IsUpdate", out var _))
                 {
-                    if (!await repository.IsAuthorWithIdExists(id))
+                    var author = await unitOfWork.AuthorsRepository.GetById(id);
+                    if (author is null)
                     {
                         context.AddFailure("Id",$"There is no author to update with id: {id}");
                     }

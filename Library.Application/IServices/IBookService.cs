@@ -11,6 +11,6 @@ public interface IBookService
     public Task<BookResponse> GetById(int id);
     public Task<BookResponse> GetByIsbn(string isbn);
     public Task Create(BookRequest book);
-    public Task Update(BookRequest bookUpdate);
+    public Task Update(int id, BookRequest bookUpdate);
     public Task Remove(int id);
 }

@@ -6,7 +6,7 @@ namespace Library.Persistence.Repositories;
 
 public class UsersRepository(ApplicationDbContext dbContext) : IUsersRepository
 {
-    public async Task<User> GetByEmail(string email)
+    public async Task<User?> GetByEmail(string email)
     {
         return await dbContext.Users
             .AsNoTracking()
@@ -15,7 +15,7 @@ public class UsersRepository(ApplicationDbContext dbContext) : IUsersRepository
 
     }
 
-    public async Task<User> GetByRefreshToken(string refreshToken)
+    public async Task<User?> GetByRefreshToken(string refreshToken)
     {
         return await dbContext.Users
             .AsNoTracking()

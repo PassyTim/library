@@ -17,7 +17,7 @@ public class CachedBooksRepository(
             key,
             entry =>
             {
-                entry.SetAbsoluteExpiration(TimeSpan.FromMinutes(2));
+                entry.SetAbsoluteExpiration(TimeSpan.FromMinutes(1));
                 return decorated.GetAllAsync(filter, pageSize, pageNumber);
             }))!;
     }
@@ -30,7 +30,7 @@ public class CachedBooksRepository(
             key,
             entry =>
             {
-                entry.SetAbsoluteExpiration(TimeSpan.FromMinutes(2));
+                entry.SetAbsoluteExpiration(TimeSpan.FromMinutes(1));
                 return decorated.GetById(id);
             }))!;
     }
@@ -43,7 +43,7 @@ public class CachedBooksRepository(
             key,
             entry =>
             {
-                entry.SetAbsoluteExpiration(TimeSpan.FromMinutes(2));
+                entry.SetAbsoluteExpiration(TimeSpan.FromMinutes(1));
                 return decorated.GetByIsbn(isbn);
             }))!;
     }
@@ -53,11 +53,4 @@ public class CachedBooksRepository(
     public async Task UpdateAsync(Book book) => await decorated.UpdateAsync(book);
 
     public async Task RemoveAsync(int bookId) => await decorated.RemoveAsync(bookId);
-
-    public async Task<bool> IsBookWithIdExists(int id) => await decorated.IsBookWithIdExists(id);
-    public async Task<bool> IsBookTaken(int id) => await decorated.IsBookTaken(id);
-    public async Task<bool> IsIsbnUnique(string isbn) => await decorated.IsIsbnUnique(isbn);
-
-    public async Task<bool> IsIsbnUniqueForUpdate(string isbn, int id) =>
-        await decorated.IsIsbnUniqueForUpdate(isbn, id);
 }

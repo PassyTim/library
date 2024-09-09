@@ -9,35 +9,19 @@ namespace Library.API.Controllers;
 [Route("api/auth")]
 public class AuthController(UserService userService) : ControllerBase
 {
-    private readonly ApiResponse _apiResponse = new();
-    
     [HttpPost("register")]
-    public async Task<ActionResult<ApiResponse>> Register([FromBody]UserRegisterRequest userRegisterRequest)
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<ActionResult> Register([FromBody]UserRegisterRequest userRegisterRequest)
     {
-        bool isUserUnique = await userService.IsUserUniqueAsync(userRegisterRequest.Email);
-        if (!isUserUnique)
-        {
-            _apiResponse.IsSuccess = false;
-            _apiResponse.StatusCode = HttpStatusCode.BadRequest;
-            _apiResponse.Errors = ["This email is already used"];
-            return BadRequest(_apiResponse);
-        }
-
-        var registrationResult = await userService.RegisterAsync(userRegisterRequest);
-        if (registrationResult.IsSuccess)
-        {
-            _apiResponse.StatusCode = HttpStatusCode.OK;
-            return Ok(_apiResponse);
-        }
-        
-        _apiResponse.IsSuccess = false;
-        _apiResponse.StatusCode = HttpStatusCode.BadRequest;
-        _apiResponse.Errors = registrationResult.Errors.ToList();
-        return BadRequest(_apiResponse);
+        await userService.RegisterAsync(userRegisterRequest);
+        return Ok();
     }
 
     [HttpPost("login")]
-    public async Task<ActionResult<ApiResponse>> Login([FromBody]UserLoginRequest userLoginRequest)
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<ActionResult> Login([FromBody]UserLoginRequest userLoginRequest)
     {
         var loginResponse = await userService.LoginAsync(userLoginRequest, true);
         
@@ -51,16 +35,6 @@ public class AuthController(UserService userService) : ControllerBase
             SameSite = SameSiteMode.None
         });
         
-        if (loginResponse.User is null || string.IsNullOrEmpty(loginResponse.AccessToken))
-        {
-            _apiResponse.IsSuccess = false;
-            _apiResponse.Errors = ["Username or password is incorrect!"];
-            _apiResponse.StatusCode = HttpStatusCode.BadRequest;
-            return BadRequest(_apiResponse);
-        }
-        
-        _apiResponse.StatusCode = HttpStatusCode.OK;
-        _apiResponse.Data = loginResponse.User;
-        return Ok(_apiResponse);
+        return Ok(loginResponse.User);
     }
 }

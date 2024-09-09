@@ -11,7 +11,6 @@ public class TokenController(UserService service) : ControllerBase
     public async Task<ActionResult<string>> Refresh()
     {
         HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken);
-        if (refreshToken is null) return BadRequest();
         
         var tokensToReturn = await service.RefreshToken(refreshToken);
         

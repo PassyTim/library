@@ -67,25 +67,4 @@ public class BooksRepository(ApplicationDbContext dbContext) : IBooksRepository
             .Where(b => b.Id == bookId)
             .ExecuteDeleteAsync();
     }
-
-    public async Task<bool> IsBookWithIdExists(int id)
-    {
-        return await dbContext.Books.AnyAsync(b => b.Id == id);
-    }
-
-    public async Task<bool> IsBookTaken(int id)
-    {
-        var book = await dbContext.Books.FirstOrDefaultAsync(b => b.Id == id);
-        return !book.UserId.IsNullOrEmpty();
-    }
-
-    public async Task<bool> IsIsbnUnique(string isbn)
-    {
-        return !await dbContext.Books.AnyAsync(b => b.Isbn == isbn);
-    }
-
-    public async Task<bool> IsIsbnUniqueForUpdate(string isbn, int id)
-    {
-        return !await dbContext.Books.AnyAsync(b => b.Isbn == isbn && b.Id != id);
-    }
 }

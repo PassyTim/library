@@ -27,5 +27,9 @@ public class MappingConfig : Profile
         CreateMap<User, UserRegisterRequest>().ReverseMap();
         CreateMap<User, UserLoginRequest>().ReverseMap();
         CreateMap<User, ResponseUser>().ReverseMap();
+        
+        CreateMap<UserRegisterRequest, User>().ReverseMap()
+            .ForMember(u => u.Role, 
+                opts => opts.Ignore());
     }
 }

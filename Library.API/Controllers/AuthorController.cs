@@ -1,5 +1,3 @@
-using System.Net;
-using FluentValidation;
 using Library.Application.Contracts;
 using Library.Application.IServices;
 using Microsoft.AspNetCore.Authorization;
@@ -10,23 +8,24 @@ namespace Library.API.Controllers;
 
 [ApiController]
 [Route("api/author")]
+[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 public class AuthorController(
-    IAuthorService service,
-    IValidator<AuthorRequest> validator) : ControllerBase
+    IAuthorService service) : ControllerBase
 {
-    private readonly ApiResponse _response = new();
-    
     [Authorize]
     [HttpGet(Name = "GetAllAuthors")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult<ApiResponse>> GetAll(int pageSize = 0, int pageNumber = 1)
+    public async Task<ActionResult<List<AuthorResponse>>> GetAll(int pageSize = 0, int pageNumber = 1)
     {
         Pagination pagination = new Pagination { PageSize = pageSize, PageNumber = pageNumber };
-        Response.Headers.Append("Pagination", JsonConvert.SerializeObject(pagination));
+        SetPaginationHeader(pagination);
         
         var authorsResponse = await service.GetAll(pageSize:pageSize, pageNumber:pageNumber);
         return Ok(authorsResponse);
+    }
+    private void SetPaginationHeader(Pagination pagination)
+    {
+        Response.Headers.Append("Pagination", JsonConvert.SerializeObject(pagination));
     }
 
     [Authorize]
@@ -34,7 +33,6 @@ public class AuthorController(
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<ActionResult<AuthorResponse>> GetById(int id)
     {
         var authorResponse = await service.GetById(id);
@@ -45,7 +43,6 @@ public class AuthorController(
     [HttpPost(Name = "CreateAuthor")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> Create([FromBody] AuthorRequest authorCreateRequest)
     {
@@ -57,11 +54,11 @@ public class AuthorController(
     [HttpPut("{id:int}", Name = "UpdateAuthor")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> Update(int id, [FromBody] AuthorRequest authorUpdateRequest)
     {
-        await service.Update(authorUpdateRequest);
+        await service.Update(authorUpdateRequest, id);
         return NoContent();
     }
     
@@ -69,7 +66,7 @@ public class AuthorController(
     [HttpDelete("{id:int}", Name = "DeleteAuthor")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> Delete(int id)
     {

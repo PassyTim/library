@@ -55,8 +55,9 @@ public class BooksValidator : AbstractValidator<BookRequest>
                 if (context.RootContextData.TryGetValue("IsUpdate", out var _))
                 {
                     var id = (int)context.RootContextData["Id"];
-                    var isIsbnUnique = await unitOfWork.BooksRepository.IsIsbnUniqueForUpdate(isbn, id);
-                    if (!isIsbnUnique)
+                    var book = await unitOfWork.BooksRepository.GetByIsbn(isbn);
+                    var existingBook = await unitOfWork.BooksRepository.GetById(id);
+                    if (book is not null || existingBook.Id != book.Id )
                     {
                         context.AddFailure("Isbn", "ISBN must be unique");
                     }
@@ -66,8 +67,8 @@ public class BooksValidator : AbstractValidator<BookRequest>
             {
                 if (context.RootContextData.TryGetValue("IsCreate", out var _))
                 {
-                    var isIsbnUnique = await unitOfWork.BooksRepository.IsIsbnUnique(isbn);
-                    if (!isIsbnUnique)
+                    var book = await unitOfWork.BooksRepository.GetByIsbn(isbn);
+                    if (book is not null)
                     {
                         context.AddFailure("Isbn", "ISBN must be unique");
                     }
@@ -104,13 +105,5 @@ public class BooksValidator : AbstractValidator<BookRequest>
         RuleFor(b => b.Genre)
             .MaximumLength(Constants.BookGenreMaxLength)
             .WithMessage($"Book genre must be less than {Constants.BookGenreMaxLength} symbols");
-
-        RuleFor(b => b.AvailableCount)
-            .MustAsync(async (availableCount, _) => availableCount >= 0)
-            .WithMessage("Available count must be greater than 0 or 0");
-        
-        RuleFor(b => b.TotalCount)
-            .MustAsync(async (totalCount, _) => totalCount >= 0)
-            .WithMessage("Total count must be greater than 0 or 0");
     }
 }
