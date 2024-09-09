@@ -6,5 +6,5 @@ public class User : IdentityUser
 {
     public string? RefreshToken { get; set; }
     public DateTime? RefreshTokenExpiryTime { get; set; }
-    public List<BorrowedBook> BorrowedBooks { get; set; } = [];
+    public List<Book> BorrowedBooks { get; set; } = [];
 }

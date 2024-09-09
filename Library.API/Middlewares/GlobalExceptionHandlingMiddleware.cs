@@ -1,4 +1,5 @@
 using System.Net;
+using Library.Application.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
@@ -11,6 +12,22 @@ public class GlobalExceptionHandlingMiddleware : IMiddleware
         try
         {
             await next(context);
+        }
+        catch (ItemNotFoundException notFoundException)
+        {
+            context.Response.StatusCode = (int)HttpStatusCode.NotFound;
+
+            ProblemDetails problemDetails = new()
+            {
+                Status = (int)HttpStatusCode.NotFound,
+                Type = "Item not found",
+                Title = "Item not found",
+                Detail = "The server cannot find the requested resource."
+            };
+
+            var jsonProblem = JsonConvert.SerializeObject(problemDetails);
+            context.Response.ContentType = "application/json";
+            await context.Response.WriteAsync(jsonProblem);
         }
         catch (Exception e)
         {
