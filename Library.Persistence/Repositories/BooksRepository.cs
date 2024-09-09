@@ -76,12 +76,7 @@ public class BooksRepository(ApplicationDbContext dbContext) : IBooksRepository
     public async Task<bool> IsBookTaken(int id)
     {
         var book = await dbContext.Books.FirstOrDefaultAsync(b => b.Id == id);
-        if (book.UserId.IsNullOrEmpty())
-        {
-            return true;
-        }
-
-        return false;
+        return !book.UserId.IsNullOrEmpty();
     }
 
     public async Task<bool> IsIsbnUnique(string isbn)

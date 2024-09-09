@@ -1,4 +1,5 @@
 using FluentValidation;
+using FluentValidation.Results;
 using Library.Application.Contracts;
 using Library.Domain;
 using Library.Persistence;
@@ -7,6 +8,12 @@ namespace Library.Application.Services.Validation;
 
 public class BooksValidator : AbstractValidator<BookRequest>
 {
+    protected override void RaiseValidationException(ValidationContext<BookRequest> context, ValidationResult result)
+    {
+        var ex = new ValidationException(result.Errors);
+        throw new ArgumentException(ex.Message, ex);
+    }
+
     public BooksValidator(IUnitOfWork unitOfWork)
     {
         RuleFor(b => b.Id).CustomAsync(async (id, context, _) =>

@@ -25,37 +25,20 @@ public class AuthorController(
         Pagination pagination = new Pagination { PageSize = pageSize, PageNumber = pageNumber };
         Response.Headers.Append("Pagination", JsonConvert.SerializeObject(pagination));
         
-        _response.Data = await service.GetAll(pageSize:pageSize, pageNumber:pageNumber);
-        _response.StatusCode = HttpStatusCode.OK;
-        return Ok(_response);
+        var authorsResponse = await service.GetAll(pageSize:pageSize, pageNumber:pageNumber);
+        return Ok(authorsResponse);
     }
 
     [Authorize]
-    [HttpGet("{id:int}/{isWithBooks:bool}", Name = "GetAuthorById")]
+    [HttpGet("{id:int}", Name = "GetAuthorById")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult<ApiResponse>> GetById(int id)
+    public async Task<ActionResult<AuthorResponse>> GetById(int id)
     {
-        _response.Data = await service.GetById(id);
-        
-        if (_response.Data is null)
-        {
-            _response.Errors.Add("There is no author with this Id");
-            _response.IsSuccess = false;
-            _response.StatusCode = HttpStatusCode.NotFound;
-            return NotFound(_response);
-        }
-        
-        if (!_response.IsSuccess)
-        {
-            _response.StatusCode = HttpStatusCode.NotFound;
-            return BadRequest(_response);
-        }
-        
-        _response.StatusCode = HttpStatusCode.OK;
-        return Ok(_response);
+        var authorResponse = await service.GetById(id);
+        return Ok(authorResponse);
     }
 
     [Authorize(Policy = "AdminPolicy")]
@@ -64,30 +47,10 @@ public class AuthorController(
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    public async Task<ActionResult<ApiResponse>> Create([FromBody] AuthorRequest authorCreateRequest)
+    public async Task<IActionResult> Create([FromBody] AuthorRequest authorCreateRequest)
     {
-        var validationContext = new ValidationContext<AuthorRequest>(authorCreateRequest);
-        validationContext.RootContextData["IsCreate"] = true;
-        var validationResult = await validator.ValidateAsync(validationContext);
-        
-        if (!validationResult.IsValid)
-        {
-            foreach (var item in validationResult.Errors)
-            {
-                _response.Errors.Add(item.ErrorMessage);
-            }
-            _response.IsSuccess = false;
-        }
-        
-        if (!_response.IsSuccess)
-        {
-            _response.StatusCode = HttpStatusCode.BadRequest;
-            return BadRequest(_response);
-        }
-        
         await service.Create(authorCreateRequest);
-        _response.StatusCode = HttpStatusCode.Created;
-        return Ok(_response);
+        return Ok();
     }
 
     [Authorize(Policy = "AdminPolicy")]
@@ -96,31 +59,10 @@ public class AuthorController(
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    public async Task<ActionResult<ApiResponse>> Update(int id, [FromBody] AuthorRequest authorUpdateRequest)
+    public async Task<IActionResult> Update(int id, [FromBody] AuthorRequest authorUpdateRequest)
     {
-        var validationContext = new ValidationContext<AuthorRequest>(authorUpdateRequest);
-        validationContext.RootContextData["IsUpdate"] = true;
-        validationContext.RootContextData["Id"] = id;
-        var validationResult = await validator.ValidateAsync(validationContext);
-        
-        if (!validationResult.IsValid)
-        {
-            foreach (var item in validationResult.Errors)
-            {
-                _response.Errors.Add(item.ErrorMessage);
-            }
-            _response.IsSuccess = false;
-        }
-        
-        if (!_response.IsSuccess)
-        {
-            _response.StatusCode = HttpStatusCode.BadRequest;
-            return BadRequest(_response);
-        }
-        
         await service.Update(authorUpdateRequest);
-        _response.StatusCode = HttpStatusCode.NoContent;
-        return Ok(_response);
+        return NoContent();
     }
     
     [Authorize(Policy = "AdminPolicy")]
@@ -129,26 +71,9 @@ public class AuthorController(
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    public async Task<ActionResult<ApiResponse>> Delete(int id)
+    public async Task<IActionResult> Delete(int id)
     {
-        var author = await service.GetById(id);
-        if (author is null)
-        {
-            _response.IsSuccess = false;
-            _response.Errors.Add($"There is no author to delete with id: {id}");
-            _response.StatusCode = HttpStatusCode.BadRequest;
-            return BadRequest(_response);
-        }
-        
         await service.Remove(id);
-        
-        if (!_response.IsSuccess)
-        {
-            _response.StatusCode = HttpStatusCode.BadRequest;
-            return BadRequest(_response);
-        }
-        
-        _response.StatusCode = HttpStatusCode.NoContent;
-        return Ok(_response);
+        return NoContent();
     }
 }

@@ -1,4 +1,5 @@
 using FluentValidation;
+using FluentValidation.Results;
 using Library.Application.Contracts;
 using Library.Domain;
 using Library.Domain.IRepositories;
@@ -7,6 +8,12 @@ namespace Library.Application.Services.Validation;
 
 public class AuthorsValidator : AbstractValidator<AuthorRequest>
 {
+    protected override void RaiseValidationException(ValidationContext<AuthorRequest> context, ValidationResult result)
+    {
+        var ex = new ValidationException(result.Errors);
+        throw new ArgumentException(ex.Message, ex);
+    }
+
     public AuthorsValidator(IAuthorsRepository repository)
     {
         RuleFor(a => a.Id)
