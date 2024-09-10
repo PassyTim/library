@@ -117,6 +117,7 @@ public class BookService(
 
         bookToUpdate.ImagePath = path;
         bookToUpdate.Isbn = IsbnNormalizer.NormalizeIsbn(isbn);
+        bookToUpdate.UserId = null;
         await unitOfWork.BooksRepository.UpdateAsync(bookToUpdate);
         await unitOfWork.SaveChangesAsync();
     }
@@ -135,6 +136,24 @@ public class BookService(
         book.TakeDate = DateTime.Today;
         book.UserId = user.Id;
 
+        await unitOfWork.BooksRepository.UpdateAsync(book);
+        await unitOfWork.SaveChangesAsync();
+    }
+
+    public async Task ReturnBookUseCase(ReturnBookRequest returnBookRequest)
+    {
+        var book = await unitOfWork.BooksRepository.GetById(returnBookRequest.BookId);
+        var user = await userManager.FindByIdAsync(returnBookRequest.UserId);
+
+        if (book is null || user is null)
+        {
+            throw new ItemNotFoundException("Book or user not found");
+        }
+
+        book.ReturnDate = DateTime.Today;
+        book.TakeDate = DateTime.Today;
+        book.UserId = null;
+        
         await unitOfWork.BooksRepository.UpdateAsync(book);
         await unitOfWork.SaveChangesAsync();
     }

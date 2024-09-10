@@ -14,13 +14,6 @@ namespace Library.API.Controllers;
 [ProducesResponseType(StatusCodes.Status401Unauthorized)]
 public class BookController(IBookService bookService) : ControllerBase
 {
-    [HttpPost("/take")]
-    public async Task<IActionResult> TakeBook(BookTakeRequest bookTakeRequest)
-    {
-        await bookService.TakeBookUseCase(bookTakeRequest);
-        return Ok();
-    }
-    
     [Authorize]
     [HttpGet(Name = "GetAllBooks")]
     [ProducesResponseType(StatusCodes.Status200OK)]

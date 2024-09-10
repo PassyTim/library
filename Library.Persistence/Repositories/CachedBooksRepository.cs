@@ -17,7 +17,7 @@ public class CachedBooksRepository(
             key,
             entry =>
             {
-                entry.SetAbsoluteExpiration(TimeSpan.FromMinutes(1));
+                entry.SetAbsoluteExpiration(TimeSpan.FromSeconds(20));
                 return decorated.GetAllAsync(filter, pageSize, pageNumber);
             }))!;
     }
@@ -30,7 +30,7 @@ public class CachedBooksRepository(
             key,
             entry =>
             {
-                entry.SetAbsoluteExpiration(TimeSpan.FromMinutes(1));
+                entry.SetAbsoluteExpiration(TimeSpan.FromSeconds(20));
                 return decorated.GetById(id);
             }))!;
     }
@@ -43,7 +43,7 @@ public class CachedBooksRepository(
             key,
             entry =>
             {
-                entry.SetAbsoluteExpiration(TimeSpan.FromMinutes(1));
+                entry.SetAbsoluteExpiration(TimeSpan.FromSeconds(20));
                 return decorated.GetByIsbn(isbn);
             }))!;
     }
