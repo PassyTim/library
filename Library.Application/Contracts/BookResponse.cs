@@ -9,7 +9,10 @@ public record BookResponse(
     string Isbn,
     string Name,
     string Genre,
-    string Description,
+    string? Description,
+    DateTime? ReturnDate,
+    DateTime? TakeDate,
+    string? UserId,
     int AuthorId)
 {
     public string ImageUrl { get; set; }

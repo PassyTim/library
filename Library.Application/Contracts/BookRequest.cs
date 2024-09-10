@@ -11,6 +11,6 @@ public record BookRequest(
     string? Description,
     int AuthorId,
     string? UserId,
-    DateTime ReturnDate,
-    DateTime TakeDate,
+    DateTime? ReturnDate,
+    DateTime? TakeDate,
     IFormFile? Image);

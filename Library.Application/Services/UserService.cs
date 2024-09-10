@@ -96,7 +96,9 @@ public class UserService(
 
     public async Task<LoginResponse> LoginAsync(UserLoginRequest userLoginRequest, bool populateExp)
     {
-        var user = await userManager.FindByEmailAsync(userLoginRequest.Email);
+        var user = await userManager.Users.Include(u=>u.BorrowedBooks)
+            .SingleAsync(u=>u.Email == userLoginRequest.Email);
+    
         await ValidateLoginAsync(user, userLoginRequest);
 
         var tokens = await CreateTokens(user, populateExp);

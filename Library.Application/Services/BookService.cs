@@ -6,6 +6,7 @@ using Library.Application.Exceptions;
 using Library.Application.IServices;
 using Library.Domain.Models;
 using Library.Persistence;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 
 namespace Library.Application.Services;
@@ -14,7 +15,8 @@ public class BookService(
     IUnitOfWork unitOfWork,
     IMapper mapper,
     IConfiguration configuration,
-    IValidator<BookRequest> validator) : IBookService
+    IValidator<BookRequest> validator,
+    UserManager<User> userManager) : IBookService
 {
     private readonly string _baseUrl = configuration["ImageBaseUrl"]!;
 
@@ -116,6 +118,24 @@ public class BookService(
         bookToUpdate.ImagePath = path;
         bookToUpdate.Isbn = IsbnNormalizer.NormalizeIsbn(isbn);
         await unitOfWork.BooksRepository.UpdateAsync(bookToUpdate);
+        await unitOfWork.SaveChangesAsync();
+    }
+
+    public async Task TakeBookUseCase(BookTakeRequest bookTakeRequest)
+    {
+        var book = await unitOfWork.BooksRepository.GetById(bookTakeRequest.BookId);
+        var user = await userManager.FindByIdAsync(bookTakeRequest.UserId);
+
+        if (book is null || user is null)
+        {
+            throw new ItemNotFoundException("Book or user not found");
+        }
+
+        book.ReturnDate = bookTakeRequest.ReturnDate;
+        book.TakeDate = DateTime.Today;
+        book.UserId = user.Id;
+
+        await unitOfWork.BooksRepository.UpdateAsync(book);
         await unitOfWork.SaveChangesAsync();
     }
 

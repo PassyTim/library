@@ -10,6 +10,7 @@ public interface IBookService
         int pageSize = 0, int pageNumber = 0);
     public Task<BookResponse> GetById(int id);
     public Task<BookResponse> GetByIsbn(string isbn);
+    public Task TakeBookUseCase(BookTakeRequest bookTakeRequest);
     public Task Create(BookRequest book);
     public Task Update(int id, BookRequest bookUpdate);
     public Task Remove(int id);

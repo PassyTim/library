@@ -8,13 +8,10 @@
 // namespace Library.API.Controllers;
 //
 // [ApiController]
-// [Route("/api/borrowService")]
+// [Route("/api/takeService")]
 // public class BorrowBookController(
-//     IBookService borrowBookService,
-//     IValidator<BorrowBookRequest> validator) : ControllerBase
+//     IBookService borrowBookService) : ControllerBase
 // {
-//     private readonly ApiResponse _response = new();
-//     
 //     [Authorize]
 //     [HttpPost("borrow")]
 //     [ProducesResponseType(StatusCodes.Status200OK)]

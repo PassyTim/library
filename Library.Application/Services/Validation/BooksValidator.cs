@@ -57,7 +57,7 @@ public class BooksValidator : AbstractValidator<BookRequest>
                     var id = (int)context.RootContextData["Id"];
                     var book = await unitOfWork.BooksRepository.GetByIsbn(isbn);
                     var existingBook = await unitOfWork.BooksRepository.GetById(id);
-                    if (book is not null || existingBook.Id != book.Id )
+                    if (book is not null && existingBook.Id != book.Id )
                     {
                         context.AddFailure("Isbn", "ISBN must be unique");
                     }
