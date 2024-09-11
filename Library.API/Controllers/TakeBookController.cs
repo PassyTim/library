@@ -1,5 +1,3 @@
-using System.Net;
-using FluentValidation;
 using Library.Application.Contracts;
 using Library.Application.IServices;
 using Microsoft.AspNetCore.Authorization;
@@ -9,7 +7,7 @@ namespace Library.API.Controllers;
 
 [ApiController]
 [Route("/api/takeBookService")]
-public class BorrowBookController(
+public class TakeBookController(
     IBookService bookService) : ControllerBase
 {
     [Authorize]
@@ -19,7 +17,7 @@ public class BorrowBookController(
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> TakeBook([FromBody]BookTakeRequest bookTakeRequest)
     {
-        await bookService.TakeBookUseCase(bookTakeRequest);
+        await bookService.TakeBook(bookTakeRequest);
         return Ok();
     }
 
@@ -30,27 +28,18 @@ public class BorrowBookController(
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Return([FromBody] ReturnBookRequest returnBookRequest)
     {
-        await bookService.ReturnBookUseCase(returnBookRequest);
+        await bookService.ReturnBook(returnBookRequest);
         return NoContent();
     }
 
-    // [Authorize]
-    // [HttpGet("{userId}")]
-    // public async Task<ActionResult<ApiResponse>> GetAll(string userId)
-    // {
-    //     var books = await borrowBookService.GetAllByUserIdAsync(userId);
-    //     if (books is null)
-    //     {
-    //         _response.StatusCode = HttpStatusCode.NotFound;
-    //         _response.IsSuccess = false;
-    //         _response.Errors.Add("No borrowed books to return");
-    //
-    //         return NotFound(_response);
-    //     }
-    //
-    //     _response.Data = books;
-    //     _response.IsSuccess = true;
-    //     _response.StatusCode = HttpStatusCode.OK;
-    //     return Ok(_response);
-    // }
+    [Authorize]
+    [HttpGet("{userId}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult> GetAll(string userId)
+    {
+        var books = await bookService.GetTakenBooksByUserId(userId);
+        return Ok(books);
+    }
 }

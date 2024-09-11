@@ -11,6 +11,9 @@ public class CachedBooksRepository(
 {
     public async Task<List<Book>> GetAllAsync(Expression<Func<Book, bool>>? filter = null, int pageSize = 0, int pageNumber = 0)
     {
+        if(filter is not null)
+            return await decorated.GetAllAsync(filter, pageSize, pageNumber);
+        
         string key = $"all-books-{pageSize}-{pageNumber}";
 
         return (await memoryCache.GetOrCreateAsync(

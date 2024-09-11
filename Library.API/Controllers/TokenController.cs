@@ -1,18 +1,20 @@
 using Library.Application.Services;
+using Library.Application.Services.UserUseCases;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Library.API.Controllers;
 
 [ApiController]
 [Route("api/token")]
-public class TokenController(UserService service) : ControllerBase
+public class TokenController(
+    RefreshTokenUseCase refreshTokenUseCase) : ControllerBase
 {
     [HttpPost("refresh")]
     public async Task<ActionResult<string>> Refresh()
     {
         HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken);
         
-        var tokensToReturn = await service.RefreshToken(refreshToken);
+        var tokensToReturn = await refreshTokenUseCase.ExecuteAsync(refreshToken);
         
         HttpContext.Response.Cookies.Append("refreshToken", tokensToReturn.RefreshToken, new CookieOptions
         {

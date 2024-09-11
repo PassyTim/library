@@ -42,6 +42,24 @@ public static class ApiExtensions
             });
         });
     }
+
+    public static void AddConfiguredCors(this IServiceCollection services)
+    {
+        services.AddCors(options =>
+        {
+            options.AddDefaultPolicy(policy =>
+            {
+                policy.WithOrigins("http://localhost:3000");
+                policy.AllowAnyHeader();
+                policy.AllowAnyMethod();
+                policy.AllowCredentials();
+                policy.WithExposedHeaders("x-count");
+                policy.WithExposedHeaders("x-pagination");
+                policy.WithExposedHeaders("Authorization");
+                policy.WithExposedHeaders("Cache-Control");
+            });
+        });
+    }
     
     public static void AddSwagger(this IServiceCollection services)
     {
