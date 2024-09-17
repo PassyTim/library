@@ -1,4 +1,4 @@
-using Library.Application.Services.AuthorService.AuthorUseCases;
+using Library.Application.Services.AuthorUseCases;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Library.Application.Services.AuthorService;

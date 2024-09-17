@@ -1,4 +1,5 @@
 using System.Security.Cryptography;
+using AutoMapper;
 using Library.Application.Contracts;
 using Library.Application.Exceptions;
 using Library.Domain.Models;
@@ -11,7 +12,8 @@ namespace Library.Application.Services.UserUseCases;
 
 public class LoginUserUseCase(
     UserManager<User> userManager,
-    IJwtProvider jwtProvider)
+    IJwtProvider jwtProvider,
+    IMapper mapper)
 {
     public async Task<LoginResponse> ExecuteAsync(UserLoginRequest request, bool populateExp)
     {
@@ -25,7 +27,7 @@ public class LoginUserUseCase(
         
         return new LoginResponse
         {
-            User = MapToResponseUser(user),
+            User = mapper.Map<ResponseUser>(user),
             AccessToken = tokens.AccessToken,
             RefreshToken = tokens.RefreshToken
         };
@@ -63,22 +65,6 @@ public class LoginUserUseCase(
         {
             AccessToken = accessToken,
             RefreshToken = refreshToken
-        };
-    }
-    
-    private ResponseUser MapToResponseUser(User user)
-    {
-        return new ResponseUser
-        {
-            Id = user.Id,
-            Email = user.Email,
-            UserName = user.UserName,
-            BorrowedBooks = user.BorrowedBooks.Select(b => new Book
-            {
-                Id = b.Id,
-                TakeDate = b.TakeDate,
-                ReturnDate = b.ReturnDate
-            }).ToList()
         };
     }
 }

@@ -1,18 +1,24 @@
-using System.Net;
-using FluentValidation;
-using Library.Application;
 using Library.Application.Contracts;
-using Library.Application.IServices;
+using Library.Application.Services.BookUseCases;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using SharpGrip.FluentValidation.AutoValidation.Mvc.Attributes;
 
 namespace Library.API.Controllers;
 
 [ApiController]
+[AutoValidation]
 [Route("api/book")]
 [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-public class BookController(IBookService bookService) : ControllerBase
+public class BookController(
+    GetAllBooksUseCase getAllBooksUseCase,
+    GetBookByIdUseCase getBookByIdUseCase,
+    GetBookByIsbnUseCase getBookByIsbnUseCase,
+    CreateBookUseCase createBookUseCase,
+    UpdateBookUseCase updateBookUseCase,
+    RemoveBookUseCase removeBookUseCase
+    ) : ControllerBase
 {
     [Authorize]
     [HttpGet(Name = "GetAllBooks")]
@@ -22,8 +28,8 @@ public class BookController(IBookService bookService) : ControllerBase
         Pagination pagination = new Pagination { PageSize = pageSize, PageNumber = pageNumber };
         SetPaginationHeader(pagination);
 
-        var books = await bookService.GetAll(pageSize:pageSize, pageNumber:pageNumber);
-        var allBooks = await bookService.GetAll();
+        var books = await getAllBooksUseCase.ExecuteAsync(pageSize:pageSize, pageNumber:pageNumber);
+        var allBooks = await getAllBooksUseCase.ExecuteAsync();
         Response.Headers.Append("x-count", allBooks.Count.ToString());
         
         return Ok(books);
@@ -40,7 +46,7 @@ public class BookController(IBookService bookService) : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult> GetById(int id)
     {
-        var book = await bookService.GetById(id);
+        var book = await getBookByIdUseCase.ExecuteAsync(id);
         return Ok(book);
     }
 
@@ -51,7 +57,7 @@ public class BookController(IBookService bookService) : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult> GetByIsbn(string isbn)
     {
-        var book = await bookService.GetByIsbn(isbn);
+        var book = await getBookByIsbnUseCase.ExecuteAsync(isbn);
         return Ok(book);
     }
 
@@ -60,9 +66,9 @@ public class BookController(IBookService bookService) : ControllerBase
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    public async Task<ActionResult> Create([FromForm] BookRequest bookCreateRequest)
+    public async Task<ActionResult> Create([AutoValidateAlways][FromForm] BookRequest bookCreateRequest)
     {
-        await bookService.Create(bookCreateRequest);
+        await createBookUseCase.ExecuteAsync(bookCreateRequest);
         return Ok();
     }
     
@@ -72,9 +78,9 @@ public class BookController(IBookService bookService) : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult> Update(int id,[FromForm] BookRequest bookUpdateRequest)
-    { 
-        await bookService.Update(id, bookUpdateRequest);
+    public async Task<ActionResult> Update(int id,[AutoValidateAlways][FromForm] BookRequest bookUpdateRequest)
+    {
+        await updateBookUseCase.ExecuteAsync(id, bookUpdateRequest);
         return NoContent();
     }
 
@@ -84,9 +90,9 @@ public class BookController(IBookService bookService) : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult> Delete(int id)
+    public async Task<ActionResult> Remove(int id)
     {
-        await bookService.Remove(id);
+        await removeBookUseCase.ExecuteAsync(id);
         return NoContent();
     }
 }

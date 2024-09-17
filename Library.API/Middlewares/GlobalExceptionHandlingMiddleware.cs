@@ -79,7 +79,7 @@ public class GlobalExceptionHandlingMiddleware : IMiddleware
                 Status = (int)HttpStatusCode.InternalServerError,
                 Type = "Server error",
                 Title = "Server error",
-                Detail = "An internal server error has occured"
+                Detail = "An internal server error has occured",
             };
 
             HandleException(context, problemDetails);

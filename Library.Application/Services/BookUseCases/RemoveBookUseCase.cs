@@ -1,7 +1,7 @@
 using Library.Application.Exceptions;
 using Library.Persistence;
 
-namespace Library.Application.Services.BookService.BookUseCases;
+namespace Library.Application.Services.BookUseCases;
 
 public class RemoveBookUseCase(
     IUnitOfWork unitOfWork)

@@ -1,4 +1,4 @@
-using Library.Application.Services.BookService.BookUseCases;
+using Library.Application.Services.BookUseCases;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Library.Application.Services.BookService;
