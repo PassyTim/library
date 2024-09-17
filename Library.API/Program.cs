@@ -2,7 +2,6 @@ using FluentValidation;
 using Library.API.Extensions;
 using Library.API.Middlewares;
 using Library.Application;
-using Library.Application.Services;
 using Library.Application.Services.AuthorService;
 using Library.Application.Services.BookService;
 using Library.Application.Services.UserUseCases;
@@ -35,8 +34,7 @@ services.AddUserUseCases();
 services.AddBookUseCases();
 services.AddAuthorUseCases();
 
-services.AddUseCaseServices();
-
+services.AddAutoValidation();
 services.AddValidatorsFromAssemblyContaining(typeof(BooksValidator));
 services.AddAutoMapper(typeof(MappingConfig));
 

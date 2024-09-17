@@ -3,7 +3,7 @@ using Library.Application.Contracts;
 using Library.Application.Exceptions;
 using Library.Persistence;
 
-namespace Library.Application.Services.BookService.BookUseCases;
+namespace Library.Application.Services.BookUseCases;
 
 public class GetUserTakenBooksUseCase(
     IMapper mapper,

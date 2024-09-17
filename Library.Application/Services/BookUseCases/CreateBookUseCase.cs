@@ -4,23 +4,22 @@ using Library.Application.Contracts;
 using Library.Domain.Models;
 using Library.Persistence;
 
-namespace Library.Application.Services.BookService.BookUseCases;
+namespace Library.Application.Services.BookUseCases;
 
 public class CreateBookUseCase(
-    IValidator<BookRequest> validator,
     IMapper mapper,
     IUnitOfWork unitOfWork)
 {
     public async Task ExecuteAsync(BookRequest bookCreate)
     {
-        var context = new ValidationContext<BookRequest>(bookCreate);
-        context.RootContextData["IsCreate"] = true;
-        var validationResult = await validator.ValidateAsync(context);
-        
-        if (!validationResult.IsValid)
+        if (bookCreate.Id != 0)
         {
-            var errorMessages = validationResult.Errors.Select(x => x.ErrorMessage);
-            throw new ValidationException(string.Join(". ", errorMessages));
+            throw new ValidationException("Id must be 0 while creating book");
+        }
+
+        if (!await IsIsbnUniqueAsync(bookCreate))
+        {
+            throw new ValidationException("Isbn already exists");
         }
             
         FileUploadHandler fileUploadHandler = new FileUploadHandler();
@@ -31,7 +30,15 @@ public class CreateBookUseCase(
 
         bookToCreate.ImagePath = path;
         bookToCreate.Isbn = IsbnNormalizer.NormalizeIsbn(isbn);
+        
         await unitOfWork.BooksRepository.CreateAsync(bookToCreate);
         await unitOfWork.SaveChangesAsync();
+    }
+    
+    private async Task<bool> IsIsbnUniqueAsync(BookRequest bookRequest)
+    {
+        var book = await unitOfWork.BooksRepository.GetByIsbn(bookRequest.Isbn);
+        
+        return book is null;
     }
 }

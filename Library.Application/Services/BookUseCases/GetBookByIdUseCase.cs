@@ -1,29 +1,25 @@
 using AutoMapper;
-using FluentValidation;
 using Library.Application.Contracts;
 using Library.Application.Exceptions;
 using Library.Persistence;
 using Microsoft.Extensions.Configuration;
 
-namespace Library.Application.Services.BookService.BookUseCases;
+namespace Library.Application.Services.BookUseCases;
 
-public class GetBookByIsbnUseCase(
+public class GetBookByIdUseCase(
     IUnitOfWork unitOfWork,
     IMapper mapper,
     IConfiguration configuration)
 {
     private readonly string _baseUrl = configuration["ImageBaseUrl"]!;
-    public async Task<BookResponse> ExecuteAsync(string isbn)
+    
+    public async Task<BookResponse> ExecuteAsync(int id)
     {
-        var book = await unitOfWork.BooksRepository.GetByIsbn(isbn);
-
-        if (!IsbnValidator.Validate(isbn))
-        {
-            throw new ValidationException("Invalid ISBN");
-        }
+        var book = await unitOfWork.BooksRepository.GetById(id);
+        
         if (book is null)
         {
-            throw new ItemNotFoundException($"Book with isbn:{isbn} not found");
+            throw new ItemNotFoundException($"Book with id:{id} not found");
         }
         
         var bookResponse = mapper.Map<BookResponse>(book);

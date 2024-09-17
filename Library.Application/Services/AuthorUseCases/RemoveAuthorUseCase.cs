@@ -1,7 +1,7 @@
 using Library.Application.Exceptions;
 using Library.Persistence;
 
-namespace Library.Application.Services.AuthorService.AuthorUseCases;
+namespace Library.Application.Services.AuthorUseCases;
 
 public class RemoveAuthorUseCase(IUnitOfWork unitOfWork)
 {

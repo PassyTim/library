@@ -3,7 +3,7 @@ using Library.Application.Contracts;
 using Library.Persistence;
 using Microsoft.Extensions.Configuration;
 
-namespace Library.Application.Services.BookService.BookUseCases;
+namespace Library.Application.Services.BookUseCases;
 
 public class GetAllBooksUseCase(
     IUnitOfWork unitOfWork,

@@ -1,16 +1,22 @@
 using Library.Application.Contracts;
-using Library.Application.IServices;
+using Library.Application.Services.AuthorUseCases;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using SharpGrip.FluentValidation.AutoValidation.Mvc.Attributes;
 
 namespace Library.API.Controllers;
 
 [ApiController]
+[AutoValidation]
 [Route("api/author")]
 [ProducesResponseType(StatusCodes.Status401Unauthorized)]
 public class AuthorController(
-    IAuthorService service) : ControllerBase
+    GetAllAuthorsUseCase getAllAuthorsUseCase,
+    GetAuthorByIdUseCase getAuthorByIdUseCase,
+    CreateAuthorUseCase createAuthorUseCase,
+    RemoveAuthorUseCase removeAuthorUseCase,
+    UpdateAuthorUseCase updateAuthorUseCase) : ControllerBase
 {
     [Authorize]
     [HttpGet(Name = "GetAllAuthors")]
@@ -20,7 +26,8 @@ public class AuthorController(
         Pagination pagination = new Pagination { PageSize = pageSize, PageNumber = pageNumber };
         SetPaginationHeader(pagination);
         
-        var authorsResponse = await service.GetAll(pageSize:pageSize, pageNumber:pageNumber);
+        var authorsResponse = 
+            await getAllAuthorsUseCase.ExecuteAsync(pageSize:pageSize, pageNumber:pageNumber);
         return Ok(authorsResponse);
     }
     private void SetPaginationHeader(Pagination pagination)
@@ -35,7 +42,7 @@ public class AuthorController(
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<AuthorResponse>> GetById(int id)
     {
-        var authorResponse = await service.GetById(id);
+        var authorResponse = await getAuthorByIdUseCase.ExecuteAsync(id);
         return Ok(authorResponse);
     }
 
@@ -44,9 +51,9 @@ public class AuthorController(
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    public async Task<IActionResult> Create([FromBody] AuthorRequest authorCreateRequest)
+    public async Task<IActionResult> Create([AutoValidateAlways][FromBody] AuthorRequest authorCreateRequest)
     {
-        await service.Create(authorCreateRequest);
+        await createAuthorUseCase.ExecuteAsync(authorCreateRequest);
         return Ok();
     }
 
@@ -56,9 +63,9 @@ public class AuthorController(
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    public async Task<IActionResult> Update(int id, [FromBody] AuthorRequest authorUpdateRequest)
+    public async Task<IActionResult> Update(int id, [AutoValidateAlways][FromBody] AuthorRequest authorUpdateRequest)
     {
-        await service.Update(authorUpdateRequest, id);
+        await updateAuthorUseCase.ExecuteAsync(authorUpdateRequest, id);
         return NoContent();
     }
     
@@ -68,9 +75,9 @@ public class AuthorController(
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    public async Task<IActionResult> Delete(int id)
+    public async Task<IActionResult> Remove(int id)
     {
-        await service.Remove(id);
+        await removeAuthorUseCase.ExecuteAsync(id);
         return NoContent();
     }
 }

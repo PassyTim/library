@@ -15,36 +15,8 @@ public class AuthorsValidator : AbstractValidator<AuthorRequest>
         throw new ArgumentException(ex.Message, ex);
     }
 
-    public AuthorsValidator(IUnitOfWork unitOfWork)
+    public AuthorsValidator()
     {
-        RuleFor(a => a.Id)
-            .CustomAsync(async (id, context, _) =>
-            {
-                if (context.RootContextData.TryGetValue("IsCreate", out var _))
-                {
-                    if (id != 0)
-                    {
-                        context.AddFailure("Id must be 0 while creating author");
-                    }
-                }
-            })
-            .CustomAsync(async (id, context, _) =>
-            {
-                if (context.RootContextData.TryGetValue("IsUpdate", out var _))
-                {
-                    var author = await unitOfWork.AuthorsRepository.GetById(id);
-                    if (author is null)
-                    {
-                        context.AddFailure("Id",$"There is no author to update with id: {id}");
-                    }
-
-                    if (context.RootContextData.TryGetValue("Id", out var contextId))
-                    {
-                        if((int)contextId != id) context.AddFailure("Id","The id's must match");
-                    }
-                }
-            });
-
         RuleFor(a => a.FirstName)
             .MaximumLength(Constants.AuthorFirstNameMaxLength)
             .WithMessage($"Author FirstName must be less than {Constants.AuthorFirstNameMaxLength} symbols");

@@ -4,7 +4,7 @@ using Library.Domain.Models;
 using Library.Persistence;
 using Microsoft.AspNetCore.Identity;
 
-namespace Library.Application.Services.BookService.BookUseCases;
+namespace Library.Application.Services.BookUseCases;
 
 public class TakeBookUseCase(
     IUnitOfWork unitOfWork,
