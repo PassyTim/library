@@ -45,23 +45,6 @@ public class SqlUsersRepositoryShould
     }
 
     [Fact]
-    public async Task GetUserByRefreshToken()
-    {
-        // Arrange
-        var repository = new UsersRepository(_context);
-        
-        _context.Users.Add(_user);
-        await _context.SaveChangesAsync();
-
-        // Act
-        var retrievedUser = await repository.GetByRefreshToken(_user.RefreshToken);
-
-        // Assert
-        Assert.NotNull(retrievedUser);
-        Assert.Equal(_user.RefreshToken, retrievedUser.RefreshToken);
-    }
-
-    [Fact]
     public async Task ReturnNullIfUserNotFoundByEmail()
     {
         // Arrange
@@ -69,19 +52,6 @@ public class SqlUsersRepositoryShould
 
         // Act
         var retrievedUser = await repository.GetByEmail("nonexistent@example.com");
-
-        // Assert
-        Assert.Null(retrievedUser);
-    }
-
-    [Fact]
-    public async Task ReturnNullIfUserNotFoundByRefreshToken()
-    {
-        // Arrange
-        var repository = new UsersRepository(_context);
-
-        // Act
-        var retrievedUser = await repository.GetByRefreshToken("nonexistentRefreshToken");
 
         // Assert
         Assert.Null(retrievedUser);

@@ -26,9 +26,7 @@ public class MappingConfig : Profile
 
         CreateMap<User, UserRegisterRequest>().ReverseMap();
         CreateMap<User, UserLoginRequest>().ReverseMap();
-        CreateMap<ResponseUser, User>().ReverseMap()
-            .ForMember(ru=>ru.BorrowedBooks, opts =>
-                opts.Ignore());
+        CreateMap<ResponseUser, User>().ReverseMap();
         
         CreateMap<UserRegisterRequest, User>().ReverseMap()
             .ForMember(u => u.Role, 

@@ -52,8 +52,20 @@ public class CachedBooksRepository(
     }
 
     public async Task CreateAsync(Book book) => await decorated.CreateAsync(book);
-    
-    public async Task UpdateAsync(Book book) => await decorated.UpdateAsync(book);
 
-    public async Task RemoveAsync(int bookId) => await decorated.RemoveAsync(bookId);
+    public async Task UpdateAsync(Book book)
+    {
+        await decorated.UpdateAsync(book);
+        
+        string key = $"book-{book.Id}";
+        memoryCache.Remove(key);
+    }
+
+    public async Task RemoveAsync(int bookId)
+    {
+        await decorated.RemoveAsync(bookId);
+        
+        string key = $"book-{bookId}";
+        memoryCache.Remove(key);
+    }
 }

@@ -12,13 +12,5 @@ public class UsersRepository(ApplicationDbContext dbContext) : IUsersRepository
             .AsNoTracking()
             .Include(u=>u.BorrowedBooks)
             .FirstOrDefaultAsync(u => u.Email == email);
-
-    }
-
-    public async Task<User?> GetByRefreshToken(string refreshToken)
-    {
-        return await dbContext.Users
-            .AsNoTracking()
-            .FirstOrDefaultAsync(u => u.RefreshToken == refreshToken);
     }
 }

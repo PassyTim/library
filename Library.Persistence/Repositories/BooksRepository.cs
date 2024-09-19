@@ -2,7 +2,6 @@ using System.Linq.Expressions;
 using Library.Domain.IRepositories;
 using Library.Domain.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 
 namespace Library.Persistence.Repositories;
 

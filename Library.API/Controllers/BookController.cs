@@ -63,6 +63,7 @@ public class BookController(
 
     [Authorize(Policy = "AdminPolicy")]
     [HttpPost(Name = "CreateBook")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]

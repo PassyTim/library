@@ -1,5 +1,4 @@
 using Library.Domain.IRepositories;
-using Library.Domain.Models;
 using Library.Persistence.Repositories;
 using Microsoft.Extensions.Caching.Memory;
 

@@ -4,7 +4,7 @@ namespace Library.Application;
 
 public class FileUploadHandler
 {
-    public string Upload(IFormFile file)
+    public string Upload(IFormFile? file)
     {
         if (file is null || file.Length == 0)
         {
