@@ -28,7 +28,7 @@ services.AddScoped<IJwtProvider, JwtProvider>();
 services.AddTransient<GlobalExceptionHandlingMiddleware>();
 
 services.AddRepositories();
-services.AddMemoryCache();
+services.AddRedis(builder.Configuration);
 
 services.AddUserUseCases();
 services.AddBookUseCases();

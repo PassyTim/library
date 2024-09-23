@@ -1,5 +1,6 @@
 using Library.Domain.IRepositories;
 using Library.Persistence.Repositories;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.Memory;
 
 namespace Library.Persistence;
@@ -7,16 +8,16 @@ namespace Library.Persistence;
 public class UnitOfWork : IUnitOfWork
 {
     private readonly ApplicationDbContext _dbContext;
-    private readonly IMemoryCache _memoryCache;
+    private readonly IDistributedCache _distributedCache;
     private IBooksRepository? _booksRepository;
     private IAuthorsRepository? _authorsRepository;
     private IUsersRepository? _usersRepository;
     private bool _isDisposed;
 
-    public UnitOfWork(ApplicationDbContext dbContext, IMemoryCache memoryCache)
+    public UnitOfWork(ApplicationDbContext dbContext, IDistributedCache distributedCache)
     {
         _dbContext = dbContext;
-        _memoryCache = memoryCache;
+        _distributedCache = distributedCache;
     }
 
     public IBooksRepository BooksRepository
@@ -25,7 +26,7 @@ public class UnitOfWork : IUnitOfWork
         {
             if (_booksRepository is null)
             {
-                _booksRepository = new CachedBooksRepository(new BooksRepository(_dbContext), _memoryCache);
+                _booksRepository = new CachedBooksRepository(new BooksRepository(_dbContext), _distributedCache);
             }
 
             return _booksRepository;

@@ -60,6 +60,15 @@ public static class ApiExtensions
             });
         });
     }
+
+    public static void AddRedis(this IServiceCollection services, IConfiguration configuration)
+    {
+        var redisConnectionString = configuration.GetConnectionString("Redis")!;
+        services.AddStackExchangeRedisCache(redisOptions =>
+        {
+            redisOptions.Configuration = redisConnectionString;
+        });
+    }
     
     public static void AddSwagger(this IServiceCollection services)
     {
