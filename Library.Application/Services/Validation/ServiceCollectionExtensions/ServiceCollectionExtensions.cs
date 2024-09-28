@@ -1,9 +1,8 @@
-using FluentValidation.Internal;
 using Microsoft.Extensions.DependencyInjection;
 using SharpGrip.FluentValidation.AutoValidation.Mvc.Enums;
 using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
 
-namespace Library.Application.Services.Validation;
+namespace Library.Application.Services.Validation.ServiceCollectionExtensions;
 
 public static class ServiceCollectionExtensions
 {

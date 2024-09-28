@@ -1,4 +1,5 @@
 using Library.Application.Contracts;
+using Library.Application.Contracts.AuthorContracts;
 using Library.Application.Services.AuthorUseCases;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

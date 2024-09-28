@@ -10,13 +10,24 @@ public class FileUploadHandler
         {
             return "NoImage.jpg";
         }
-        
-        var fileName = Guid.NewGuid() + Path.GetExtension(file.FileName);
-        var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/Uploads/");
 
-        using FileStream stream = new FileStream(uploadsFolder  + fileName, FileMode.Create);
+        var fileName = GenerateFileName(file);
+        var filePath = GenerateFilePath(fileName);
+
+        using FileStream stream = new FileStream(filePath, FileMode.Create);
         file.CopyTo(stream);
 
         return Path.Combine(fileName);
+    }
+
+    private string GenerateFileName(IFormFile file)
+    {
+        return Guid.NewGuid() + Path.GetExtension(file.FileName);
+    }
+
+    private string GenerateFilePath(string fileName)
+    {
+        var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/Uploads/");
+        return uploadsFolder + fileName;
     }
 }

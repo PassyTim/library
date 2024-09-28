@@ -1,7 +1,6 @@
-using System.ComponentModel.DataAnnotations;
-using Library.Domain;
+using Library.Application.Contracts.BookContracts;
 
-namespace Library.Application.Contracts;
+namespace Library.Application.Contracts.AuthorContracts;
 
 public record AuthorResponse(
     int Id,

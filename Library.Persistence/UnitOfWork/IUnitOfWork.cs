@@ -1,6 +1,6 @@
 using Library.Domain.IRepositories;
 
-namespace Library.Persistence;
+namespace Library.Persistence.UnitOfWork;
 
 public interface IUnitOfWork : IDisposable
 {

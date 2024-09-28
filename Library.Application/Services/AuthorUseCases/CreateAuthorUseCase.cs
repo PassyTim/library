@@ -1,8 +1,9 @@
 using AutoMapper;
 using FluentValidation;
 using Library.Application.Contracts;
+using Library.Application.Contracts.AuthorContracts;
 using Library.Domain.Models;
-using Library.Persistence;
+using Library.Persistence.UnitOfWork;
 
 namespace Library.Application.Services.AuthorUseCases;
 

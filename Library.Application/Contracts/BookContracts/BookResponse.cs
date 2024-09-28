@@ -1,8 +1,4 @@
-using System.ComponentModel.DataAnnotations;
-using Library.Domain;
-using Library.Domain.Models;
-
-namespace Library.Application.Contracts;
+namespace Library.Application.Contracts.BookContracts;
 
 public record BookResponse(
     int Id,

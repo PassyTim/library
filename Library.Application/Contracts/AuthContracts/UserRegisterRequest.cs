@@ -1,6 +1,4 @@
-using System.ComponentModel.DataAnnotations;
-
-namespace Library.Application.Contracts;
+namespace Library.Application.Contracts.AuthContracts;
 
 public record UserRegisterRequest(
     string UserName,

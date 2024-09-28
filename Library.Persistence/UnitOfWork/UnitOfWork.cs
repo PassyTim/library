@@ -1,9 +1,8 @@
 using Library.Domain.IRepositories;
 using Library.Persistence.Repositories;
 using Microsoft.Extensions.Caching.Distributed;
-using Microsoft.Extensions.Caching.Memory;
 
-namespace Library.Persistence;
+namespace Library.Persistence.UnitOfWork;
 
 public class UnitOfWork : IUnitOfWork
 {

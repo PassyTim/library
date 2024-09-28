@@ -1,6 +1,7 @@
 using FluentValidation;
 using FluentValidation.Results;
 using Library.Application.Contracts;
+using Library.Application.Contracts.AuthorContracts;
 using Library.Domain;
 using Library.Domain.IRepositories;
 using Library.Persistence;

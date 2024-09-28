@@ -1,5 +1,6 @@
 using System.Security.Cryptography;
 using Library.Application.Contracts;
+using Library.Application.Contracts.AuthContracts;
 using Library.Application.Exceptions;
 using Library.Domain.Models;
 using Library.Infrastructure;

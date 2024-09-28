@@ -1,8 +1,9 @@
 using AutoMapper;
 using FluentValidation;
 using Library.Application.Contracts;
+using Library.Application.Contracts.BookContracts;
 using Library.Application.Exceptions;
-using Library.Persistence;
+using Library.Persistence.UnitOfWork;
 using Microsoft.Extensions.Configuration;
 
 namespace Library.Application.Services.BookUseCases;

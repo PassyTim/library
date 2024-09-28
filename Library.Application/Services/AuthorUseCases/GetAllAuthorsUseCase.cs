@@ -1,6 +1,7 @@
 using AutoMapper;
 using Library.Application.Contracts;
-using Library.Persistence;
+using Library.Application.Contracts.AuthorContracts;
+using Library.Persistence.UnitOfWork;
 
 namespace Library.Application.Services.AuthorUseCases;
 

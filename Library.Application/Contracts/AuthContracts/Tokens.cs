@@ -1,4 +1,4 @@
-namespace Library.Application.Contracts;
+namespace Library.Application.Contracts.AuthContracts;
 
 public class Tokens
 {

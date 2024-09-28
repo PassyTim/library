@@ -1,7 +1,8 @@
 using Library.Application.Contracts;
+using Library.Application.Contracts.BookContracts;
 using Library.Application.Exceptions;
 using Library.Domain.Models;
-using Library.Persistence;
+using Library.Persistence.UnitOfWork;
 using Microsoft.AspNetCore.Identity;
 
 namespace Library.Application.Services.BookUseCases;

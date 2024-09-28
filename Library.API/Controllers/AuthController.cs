@@ -1,5 +1,6 @@
 using System.Net;
 using Library.Application.Contracts;
+using Library.Application.Contracts.AuthContracts;
 using Library.Application.Services;
 using Library.Application.Services.UserUseCases;
 using Microsoft.AspNetCore.Mvc;

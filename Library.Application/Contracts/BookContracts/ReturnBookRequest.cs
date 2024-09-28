@@ -1,4 +1,4 @@
-namespace Library.Application.Contracts;
+namespace Library.Application.Contracts.BookContracts;
 
 public record ReturnBookRequest(
     string UserId,

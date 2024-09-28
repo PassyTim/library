@@ -1,7 +1,6 @@
-using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Http;
 
-namespace Library.Application.Contracts;
+namespace Library.Application.Contracts.BookContracts;
 
 public record BookRequest(
     int Id,

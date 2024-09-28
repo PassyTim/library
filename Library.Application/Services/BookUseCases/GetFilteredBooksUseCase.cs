@@ -1,8 +1,9 @@
 using System.Linq.Expressions;
 using AutoMapper;
 using Library.Application.Contracts;
+using Library.Application.Contracts.BookContracts;
 using Library.Domain.Models;
-using Library.Persistence;
+using Library.Persistence.UnitOfWork;
 using Microsoft.Extensions.Configuration;
 
 namespace Library.Application.Services.BookUseCases;

@@ -1,7 +1,6 @@
-using Library.Application.Services.AuthorUseCases;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Library.Application.Services.AuthorService;
+namespace Library.Application.Services.AuthorUseCases.ServiceCollectionExtensions;
 
 public static class ServiceCollectionExtensions
 {

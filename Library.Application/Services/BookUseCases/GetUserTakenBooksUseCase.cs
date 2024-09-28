@@ -1,7 +1,8 @@
 using AutoMapper;
 using Library.Application.Contracts;
+using Library.Application.Contracts.BookContracts;
 using Library.Application.Exceptions;
-using Library.Persistence;
+using Library.Persistence.UnitOfWork;
 
 namespace Library.Application.Services.BookUseCases;
 

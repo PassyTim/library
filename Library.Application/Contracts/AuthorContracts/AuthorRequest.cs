@@ -1,7 +1,4 @@
-using System.ComponentModel.DataAnnotations;
-using Library.Domain;
-
-namespace Library.Application.Contracts;
+namespace Library.Application.Contracts.AuthorContracts;
 
 public record AuthorRequest(
     int Id,

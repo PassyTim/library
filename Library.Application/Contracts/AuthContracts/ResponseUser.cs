@@ -1,6 +1,4 @@
-using Library.Domain.Models;
-
-namespace Library.Application.Contracts;
+namespace Library.Application.Contracts.AuthContracts;
 
 public record ResponseUser(
     string Id,
