@@ -1,0 +1,71 @@
+﻿services:
+  library.api:
+    image: library.api
+    container_name: library.api
+    ports:
+      - "5000:5000"
+      - "5001:5001"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_HTTP_PORTS=5000
+      - ASPNETCORE_HTTPS_PORTS=5001
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=password
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
+    volumes:
+      - ~/.aspnet/https:/https:ro
+    build:
+      context: .
+      dockerfile: Library.API/Dockerfile
+    depends_on:
+      library.cache:
+        condition: service_started
+      library.database:
+        condition: service_healthy
+    networks:
+      - library_network
+      
+  library.frontend:
+    image: passyexe/library-frontend:v1.3
+    container_name: library.frontend
+    environment:
+      - NODE_ENV=production
+    ports: 
+      - "3000:3000"
+    depends_on:
+      library.api:
+        condition: service_started
+    networks:
+      - library_network
+    
+  library.cache:
+    image: redis:latest
+    container_name: library.cache
+    restart: always
+    ports:
+        - '6379:6379'
+    networks:
+      - library_network
+  
+  library.database:
+    image: mcr.microsoft.com/mssql/server:latest
+    container_name: library.database
+    user: root
+    environment:
+      - SA_USERNAME=sa
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=Passw0rd
+#    volumes:
+#      - ./.containers/library-db:/var/lib/sqlserver/data
+    ports:
+      - "1433:1433"
+    healthcheck:
+      test: "exit 0"
+      interval: 700s
+      timeout: 10s
+      retries: 10
+    networks:
+      - library_network
+      
+networks:
+  library_network:
+    driver: bridge

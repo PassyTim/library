@@ -12,6 +12,7 @@ using Library.Persistence;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Net.Http.Headers;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -70,14 +71,16 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
-    app.ApplyMigrations();
 }
 
+app.ApplyMigrations();
 app.UseCors();
 
-app.UseHttpsRedirection();
 app.UseStaticFiles(new StaticFileOptions
 {
+    FileProvider = new PhysicalFileProvider(
+        Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Uploads")),
+    RequestPath = "/Uploads",
     OnPrepareResponse = ctx =>
     {
         const int durationInSeconds = 60 * 60 * 24;

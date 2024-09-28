@@ -49,7 +49,7 @@ public static class ApiExtensions
         {
             options.AddDefaultPolicy(policy =>
             {
-                policy.WithOrigins("http://localhost:3000");
+                policy.WithOrigins("http://localhost:3000", "http://library.api:5000");
                 policy.AllowAnyHeader();
                 policy.AllowAnyMethod();
                 policy.AllowCredentials();
