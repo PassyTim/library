@@ -1,7 +1,6 @@
-using Library.Application.Services.BookUseCases;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Library.Application.Services.BookService;
+namespace Library.Application.Services.BookUseCases;
 
 public static class ServiceCollectionExtensions
 {
@@ -16,6 +15,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<ReturnBookUseCase>();
         services.AddScoped<TakeBookUseCase>();
         services.AddScoped<UpdateBookUseCase>();
+        services.AddScoped<GetFilteredBooksUseCase>();
 
         return services;
     }

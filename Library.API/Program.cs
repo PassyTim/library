@@ -3,7 +3,7 @@ using Library.API.Extensions;
 using Library.API.Middlewares;
 using Library.Application;
 using Library.Application.Services.AuthorService;
-using Library.Application.Services.BookService;
+using Library.Application.Services.BookUseCases;
 using Library.Application.Services.UserUseCases;
 using Library.Application.Services.Validation;
 using Library.Domain.Models;

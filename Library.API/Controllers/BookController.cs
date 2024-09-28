@@ -17,7 +17,8 @@ public class BookController(
     GetBookByIsbnUseCase getBookByIsbnUseCase,
     CreateBookUseCase createBookUseCase,
     UpdateBookUseCase updateBookUseCase,
-    RemoveBookUseCase removeBookUseCase
+    RemoveBookUseCase removeBookUseCase,
+    GetFilteredBooksUseCase getFilteredBooksUseCase
     ) : ControllerBase
 {
     [Authorize]
@@ -34,6 +35,24 @@ public class BookController(
         
         return Ok(books);
     }
+    
+    [Authorize]
+    [HttpGet("search", Name = "GetAllFilteredBooks")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<ActionResult> GetFilteredBooks([FromQuery] int pageSize = 0,
+        [FromQuery] int pageNumber = 1, [FromQuery] int? authorId = null, [FromQuery] string? bookName = null)
+    {
+        Pagination pagination = new Pagination { PageSize = pageSize, PageNumber = pageNumber };
+        SetPaginationHeader(pagination);
+        
+        var books = await getFilteredBooksUseCase.ExecuteAsync(pageSize, pageNumber, authorId, bookName);
+        
+        var allBooks = await getFilteredBooksUseCase.ExecuteAsync(authorId: authorId, name: bookName);
+        Response.Headers.Append("x-count", allBooks.Count.ToString());
+
+        return Ok(books);
+    }
+    
     private void SetPaginationHeader(Pagination pagination)
     {
         Response.Headers.Append("Pagination", JsonConvert.SerializeObject(pagination));
