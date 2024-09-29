@@ -3,9 +3,7 @@ using Library.API.Extensions;
 using Library.API.Middlewares;
 using Library.Application;
 using Library.Application.Services.AuthorUseCases.ServiceCollectionExtensions;
-using Library.Application.Services.BookUseCases;
 using Library.Application.Services.BookUseCases.ServiceCollectionExtensions;
-using Library.Application.Services.UserUseCases;
 using Library.Application.Services.UserUseCases.ServiceCollectionExtensions;
 using Library.Application.Services.Validation;
 using Library.Application.Services.Validation.ServiceCollectionExtensions;
@@ -70,7 +68,7 @@ services.AddConfiguredCors();
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
 {
     app.UseSwagger();
     app.UseSwaggerUI();

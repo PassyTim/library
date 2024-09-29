@@ -23,7 +23,9 @@ public class MappingConfig : Profile
             
         CreateMap<BookRequest, Book>().ReverseMap();
 
-        CreateMap<AuthorRequest, Author>().ReverseMap();
+        CreateMap<Author, AuthorRequest>().ReverseMap()
+            .ForMember(dest => dest.Books,
+                opts => opts.Ignore());
         CreateMap<AuthorResponse, Author>().ReverseMap();
 
         CreateMap<User, UserRegisterRequest>().ReverseMap();

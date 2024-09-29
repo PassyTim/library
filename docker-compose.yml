@@ -54,8 +54,6 @@
       - SA_USERNAME=sa
       - ACCEPT_EULA=Y
       - SA_PASSWORD=Passw0rd
-#    volumes:
-#      - ./.containers/library-db:/var/lib/sqlserver/data
     ports:
       - "1433:1433"
     healthcheck:
