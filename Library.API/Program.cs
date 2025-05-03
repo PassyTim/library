@@ -21,7 +21,8 @@ var services = builder.Services;
 
 services.AddDbContext<ApplicationDbContext>(options =>
 {
-    options.UseNpgsql(System.Environment.GetEnvironmentVariable("DB_CONNECTION_STRING"));
+    options.UseNpgsql(Environment.GetEnvironmentVariable("DB_CONNECTION_STRING"),
+        x => x.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.GetName().Name));
 });
 
 services.Configure<JwtOptions>(builder.Configuration.GetSection(nameof(JwtOptions)));
@@ -74,7 +75,7 @@ if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
     app.UseSwaggerUI();
 }
 
-app.ApplyMigrations();
+await app.ApplyMigrations();
 app.UseCors();
 
 app.UseStaticFiles(new StaticFileOptions

@@ -6,7 +6,7 @@ namespace Library.API.Middlewares;
 
 public static class ApplyMigrationsMiddleware
 {
-    public static async void ApplyMigrations(this IApplicationBuilder app)
+    public async static Task ApplyMigrations(this IApplicationBuilder app)
     {
         using IServiceScope scope = app.ApplicationServices.CreateScope();
 
