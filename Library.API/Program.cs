@@ -21,7 +21,7 @@ var services = builder.Services;
 
 services.AddDbContext<ApplicationDbContext>(options =>
 {
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultSQLConnection"));
+    options.UseNpgsql(System.Environment.GetEnvironmentVariable("DB_CONNECTION_STRING"));
 });
 
 services.Configure<JwtOptions>(builder.Configuration.GetSection(nameof(JwtOptions)));
