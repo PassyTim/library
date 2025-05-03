@@ -21,8 +21,7 @@ var services = builder.Services;
 
 services.AddDbContext<ApplicationDbContext>(options =>
 {
-    options.UseNpgsql(Environment.GetEnvironmentVariable("DB_CONNECTION_STRING"),
-        x => x.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.GetName().Name));
+    options.UseNpgsql(Environment.GetEnvironmentVariable("DB_CONNECTION_STRING"));
 });
 
 services.Configure<JwtOptions>(builder.Configuration.GetSection(nameof(JwtOptions)));
