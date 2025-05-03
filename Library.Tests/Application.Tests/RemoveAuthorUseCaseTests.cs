@@ -4,6 +4,7 @@ using Library.Domain.IRepositories;
 using Library.Domain.Models;
 using Library.Persistence.UnitOfWork;
 using Moq;
+using Xunit;
 
 namespace Library.Tests.Application.Tests;
 
