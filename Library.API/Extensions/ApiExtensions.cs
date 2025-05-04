@@ -61,12 +61,11 @@ public static class ApiExtensions
         });
     }
 
-    public static void AddRedis(this IServiceCollection services)
+    public static void AddRedis(this IServiceCollection services, string connectionString)
     {
-        var redisConnectionString = Environment.GetEnvironmentVariable("REDIS_CONNECTION_STRING");
         services.AddStackExchangeRedisCache(redisOptions =>
         {
-            redisOptions.Configuration = redisConnectionString;
+            redisOptions.Configuration = connectionString;
         });
     }
     

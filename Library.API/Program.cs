@@ -1,3 +1,5 @@
+using Azure.Identity;
+using Azure.Security.KeyVault.Secrets;
 using FluentValidation;
 using Library.API.Extensions;
 using Library.API.Middlewares;
@@ -19,9 +21,21 @@ using Microsoft.Net.Http.Headers;
 var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;
 
+var endpoint = Environment.GetEnvironmentVariable("APP_CONFIGURATION_URI")!
+               ?? throw new InvalidOperationException("The setting `Endpoints:AppConfiguration` was not found.");
+
+builder.Configuration.AddAzureAppConfiguration(options =>
+{
+    options.Connect(new Uri(endpoint), new DefaultAzureCredential());
+});
+
+var client = new SecretClient(new Uri(Environment.GetEnvironmentVariable("KEY_VAULT_URI")!),
+    new DefaultAzureCredential());
+
 services.AddDbContext<ApplicationDbContext>(options =>
 {
-    options.UseNpgsql(Environment.GetEnvironmentVariable("DB_CONNECTION_STRING"));
+    var connectionString = client.GetSecret("db-connection-string").Value.ToString();
+    options.UseNpgsql(connectionString);
 });
 
 services.Configure<JwtOptions>(builder.Configuration.GetSection(nameof(JwtOptions)));
@@ -30,7 +44,9 @@ services.AddScoped<IJwtProvider, JwtProvider>();
 services.AddTransient<GlobalExceptionHandlingMiddleware>();
 
 services.AddRepositories();
-services.AddRedis();
+
+var redisConnectionString = client.GetSecret("redis-connection-string").Value.ToString();
+services.AddRedis(redisConnectionString!);
 
 services.AddUserUseCases();
 services.AddBookUseCases();
