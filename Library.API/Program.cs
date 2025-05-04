@@ -30,7 +30,7 @@ services.AddScoped<IJwtProvider, JwtProvider>();
 services.AddTransient<GlobalExceptionHandlingMiddleware>();
 
 services.AddRepositories();
-services.AddRedis(builder.Configuration);
+services.AddRedis();
 
 services.AddUserUseCases();
 services.AddBookUseCases();
