@@ -37,7 +37,7 @@ var client = new SecretClient(new Uri(Environment.GetEnvironmentVariable("KEY_VA
 
 services.AddDbContext<ApplicationDbContext>(options =>
 {
-    var connectionString = client.GetSecret("db-connection-string").Value.ToString();
+    var connectionString = client.GetSecret("db-connection-string").Value.Value;
     options.UseNpgsql(connectionString);
 });
 
