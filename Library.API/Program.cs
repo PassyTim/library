@@ -26,7 +26,7 @@ var endpoint = Environment.GetEnvironmentVariable("APP_CONFIGURATION_URI")!
 
 builder.Configuration.AddAzureAppConfiguration(options =>
 {
-    options.Connect(new Uri(endpoint), new DefaultAzureCredential());
+    options.Connect(new Uri(endpoint), new ManagedIdentityCredential());
 });
 
 var client = new SecretClient(new Uri(Environment.GetEnvironmentVariable("KEY_VAULT_URI")!),
