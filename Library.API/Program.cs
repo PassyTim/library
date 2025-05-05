@@ -28,7 +28,8 @@ var endpoint = Environment.GetEnvironmentVariable("APP_CONFIGURATION_URI")!
 
 builder.Configuration.AddAzureAppConfiguration(options =>
 {
-    options.Connect(new Uri(endpoint), credentials);
+    options.Connect(new Uri(endpoint), credentials)
+        .ConfigureKeyVault(kv => kv.SetCredential(credentials));
 });
 
 var client = new SecretClient(new Uri(Environment.GetEnvironmentVariable("KEY_VAULT_URI")!),
