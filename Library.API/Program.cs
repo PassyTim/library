@@ -48,7 +48,7 @@ services.AddTransient<GlobalExceptionHandlingMiddleware>();
 
 services.AddRepositories();
 
-var redisConnectionString = client.GetSecret("redis-connection-string").Value.ToString();
+var redisConnectionString = client.GetSecret("redis-connection-string").Value.Value;
 services.AddRedis(redisConnectionString!);
 
 services.AddUserUseCases();
