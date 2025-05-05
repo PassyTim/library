@@ -21,16 +21,18 @@ using Microsoft.Net.Http.Headers;
 var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;
 
+var credentials = new ManagedIdentityCredential();
+
 var endpoint = Environment.GetEnvironmentVariable("APP_CONFIGURATION_URI")!
                ?? throw new InvalidOperationException("The setting `Endpoints:AppConfiguration` was not found.");
 
 builder.Configuration.AddAzureAppConfiguration(options =>
 {
-    options.Connect(new Uri(endpoint), new ManagedIdentityCredential());
+    options.Connect(new Uri(endpoint), credentials);
 });
 
 var client = new SecretClient(new Uri(Environment.GetEnvironmentVariable("KEY_VAULT_URI")!),
-    new DefaultAzureCredential());
+    credentials);
 
 services.AddDbContext<ApplicationDbContext>(options =>
 {
