@@ -35,8 +35,7 @@ public class TakeBookController(
         await returnBookUseCase.ExecuteAsync(returnBookRequest);
         return NoContent();
     }
-
-    [FeatureGate("GetBooksByUserId")]
+    
     [Authorize]
     [HttpGet("{userId}")]
     [ProducesResponseType(StatusCodes.Status200OK)]

@@ -3,6 +3,7 @@ using Library.Application.Contracts.BookContracts;
 using Library.Application.Services.BookUseCases;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.FeatureManagement.Mvc;
 using Newtonsoft.Json;
 using SharpGrip.FluentValidation.AutoValidation.Mvc.Attributes;
 
@@ -105,6 +106,7 @@ public class BookController(
         return NoContent();
     }
 
+    [FeatureGate("DeleteBook")]
     [Authorize(Policy = "AdminPolicy")]
     [HttpDelete("{id:int}", Name = "DeleteBook")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
