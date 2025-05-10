@@ -3,6 +3,7 @@ using Library.Application.Contracts.BookContracts;
 using Library.Application.Services.BookUseCases;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.FeatureManagement.Mvc;
 
 namespace Library.API.Controllers;
 
@@ -35,6 +36,7 @@ public class TakeBookController(
         return NoContent();
     }
 
+    [FeatureGate("GetBooksByUserId")]
     [Authorize]
     [HttpGet("{userId}")]
     [ProducesResponseType(StatusCodes.Status200OK)]

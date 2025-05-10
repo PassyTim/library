@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.FeatureManagement;
 using Microsoft.Net.Http.Headers;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -30,7 +31,11 @@ builder.Configuration.AddAzureAppConfiguration(options =>
 {
     options.Connect(new Uri(endpoint), credentials)
         .ConfigureKeyVault(kv => kv.SetCredential(credentials));
+
+    options.UseFeatureFlags();
 });
+
+builder.Services.AddFeatureManagement();
 
 var client = new SecretClient(new Uri(Environment.GetEnvironmentVariable("KEY_VAULT_URI")!),
     credentials);
